@@ -120,7 +120,7 @@
           <n-checkbox
             @update:checked="updatePublished"
             :default-checked="updateArticle.isPublished"
-            :checked="checkis"
+            v-model:checked="checkis"
             label="是否发布"
           />
         </n-form-item>
