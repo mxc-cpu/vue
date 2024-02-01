@@ -14,10 +14,18 @@
       <n-grid cols="24" :x-gap="10" item-responsive>
         <n-grid-item span="0 400:8 600:5 800:5">
           <Asidebox name="公告" type="announcement"></Asidebox>
+          <n-card >
+          <n-menu  :options="menuOptions">   </n-menu>
+          
+        </n-card>
         </n-grid-item>
         <n-grid-item span="24 400:8 600:14 800:14">
        <!---->
+       <n-message-provider >
+       <n-dialog-provider >
        <RouterView/>
+      </n-dialog-provider>
+      </n-message-provider>
         </n-grid-item>
         <n-grid-item span="0 400:8 600:5 800:5">
           <Asidebox type="search" @GetSearchValue="searchCallBack"></Asidebox>
@@ -26,11 +34,13 @@
             name="我的关注"
             type="focus"
             :focusData="focusDataComp.arr"
+            :user-id="route.params.id"
           ></Asidebox>
           <Asidebox
             name="我的粉丝"
             type="fan"
             :fanData="fanDataComp.arr"
+            :user-id="route.params.id"
           ></Asidebox>
         </n-grid-item>
       </n-grid>
@@ -41,25 +51,131 @@
 </template>
 
 <script setup>
-import Asidebox from "../components/Asidebox.vue";
+import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
 import BlogdynamicsList from "../views/BlogdynamicsList.vue";
 import MessageList from "../views/MessageList.vue";
 import { loginState } from "../store/StoreLogin";
-import { onBeforeMount, onBeforeUpdate, onMounted, reactive, ref } from "vue";
+import { onBeforeMount, onBeforeUpdate, onMounted, reactive, ref,h } from "vue";
 import { FindFocusList, FindFansList } from "../api/DynamicsApi";
 import { GetUserAvatar, GetUserName } from "../api/getUserInfoApi";
-import { RouterView } from "vue-router";
+import { RouterView,RouterLink,useRoute } from "vue-router";
+import{ NIcon } from 'naive-ui'
+import {Bell,Books,Activity,Star} from "@vicons/tabler";
+const route=useRoute()
+
+function renderIcon(icon) {
+  return () => h(NIcon, null, { default: () => h(icon) });
+}
+
+const menuOptions= [
+  {
+    label: () => h(
+     
+      RouterLink,
+      {
+        to: {
+          path: '/Dynamics/'+`${store.userId}`,
+         
+        },
+       
+      },
+     
+      { default: () => "动态" },
+    
+    ),
+    key: '动态',
+    icon: renderIcon(Activity)
+  },
+  {
+    key: 'divider-1',
+    type: 'divider',
+    props: {
+      style: {
+        marginLeft: '32px'
+      }
+    }
+  },
+  {
+    label: () => h(
+      RouterLink,
+      {
+        to: {
+          path: '/collect/'+`${store.userId}`,
+          params: {
+            userId:store.userId,
+          }
+        }
+      },
+      { default: () => "收藏" }
+    ),
+    key: '收藏',
+    icon: renderIcon(Star)
+  },
+  {
+    key: 'divider-1',
+    type: 'divider',
+    props: {
+      style: {
+        marginLeft: '32px'
+      }
+    }
+  },
+  {
+    label: () => h(
+      RouterLink,
+      {
+        to: {
+          name:"ArticleListByuser",
+          params: {
+            userId:store.userId,
+          }
+         
+        }
+      },
+      { default: () => "博客" }
+    ),
+    key: '博客',
+    icon: renderIcon(Books)
+  },
+  {
+    key: 'divider-1',
+    type: 'divider',
+    props: {
+      style: {
+        marginLeft: '32px'
+      }
+    }
+  },
+  {
+    label: () => h(
+      RouterLink,
+      {
+        to: {
+          name:"message",
+          params: {
+            Id:store.userId,
+          }
+         
+        }
+      },
+      { default: () => "消息" }
+    ),
+    key: '消息',
+    icon: renderIcon(Bell)
+  },
+ 
+]
 const store = loginState();
 
 const fanDataComp = reactive({ arr: [] });
 
 const focusDataComp = reactive({ arr: [] });
-
+const props = defineProps({ id: { type: Number, required: true },})
 const loadfoucus = () => {
   let dataList = { arr: [] };
 
-  FindFocusList(store.userId).then(async (res) => {
+  FindFocusList(route.params.id).then(async (res) => {
     focusDataComp.arr.splice(0);
     console.log("清空", focusDataComp.arr);
     if (res.data.success == true) {
@@ -95,7 +211,7 @@ const loadfoucus = () => {
 const loadfan = () => {
   let dataList = { arr: [] };
 
-  FindFansList(store.userId).then(async (res) => {
+  FindFansList(route.params.id).then(async (res) => {
     fanDataComp.arr.splice(0);
     console.log("清空", fanDataComp.arr);
     if (res.data.success == true) {

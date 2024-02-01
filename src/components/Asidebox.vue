@@ -1,12 +1,12 @@
 <template>
   <aside class="box side-title">
     <h1 v-if="props.type == 'focus'">
-      <router-link to="/focus/">
+      <router-link :to="`/focus/${userId}`">
         {{ props.name }}
       </router-link>
     </h1>
     <h1 v-else-if="props.type == 'fan'">
-      <router-link to="/fan/">
+      <router-link :to="`/fan/${userId}`">
         {{ props.name }}
       </router-link>
     </h1>
@@ -74,6 +74,10 @@ import { SearchOutlined } from "@ant-design/icons-vue";
 import { ref, defineEmits } from "vue";
 import { router } from "../routes/router";
 const props = defineProps({
+  userId:{
+    type: Number,
+    default: 0,
+  },
   name: {
     type: String,
     default: "搜索",

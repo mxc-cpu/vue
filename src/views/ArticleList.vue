@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import ArticleItem from '../components/ArticleItem.vue'
+import ArticleItem from '../components/articleitem.vue'
 
 import { onMounted, onBeforeMount,reactive, ref, watch, onBeforeUpdate } from "vue";
 import { ArticlePage, ArticlePageByuser } from "../api/articleApi"

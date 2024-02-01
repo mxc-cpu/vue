@@ -7,7 +7,7 @@
     v-model:value="tabValue"
     @update:value="change"
   >
-    <n-tab-pane tab="我关注的人" name="/focus/">
+    <n-tab-pane tab="我关注的人" :name="`/focus/${route.params.id}`">
       <n-grid :key="index" x-gap="20" y-gap="2" :cols="9">
         <n-gi v-for="(item, index) in focusDataComp.arr">
           <p v-if="item == '没有关注'">{{ item }}</p>
@@ -18,6 +18,7 @@
               <p class="has-text-centered">{{ item.name }}</p>
             </div>
           </router-link>
+         
         </n-gi>
       </n-grid>
       <div class= "level py-6 ">
@@ -25,7 +26,7 @@
             @update:page="loadfocus" />
     </div>
     </n-tab-pane>
-    <n-tab-pane tab="我的粉丝" name="/fan/"> 
+    <n-tab-pane tab="我的粉丝" :name="`/fan/${route.params.id}`"> 
         <n-grid :key="index" x-gap="20" y-gap="2" :cols="9">
         <n-gi v-for="(item, index) in fanDataComp.arr">
           <p v-if="item == '没有粉丝'">{{ item }}</p>
@@ -59,7 +60,7 @@ import { router } from '../routes/router.js';
 
 const route=useRoute()
 const store = loginState();
-const tabValue = ref("/focus/");
+const tabValue = ref("/focus/"+`${route.params.id}`);
 const fanDataComp = reactive({ arr: [] });
 const focusDataComp = reactive({ arr: [] });
 var pageCount = ref(1);
@@ -79,7 +80,7 @@ const loadfocus = async (page = 0) => {
     pageinfo.pageIndex = page
   }
   const info = reactive({
-      Id: store.userId,
+      Id: route.params.id,
       pageIndex: pageinfo.pageIndex,
       pageSize: pageinfo.pageSize,
     })
@@ -121,7 +122,7 @@ const loadfan = async (page = 0) => {
     pageinfo2.pageIndex = page
   }
   const info = reactive({
-      Id: store.userId,
+      Id: route.params.id,
       pageIndex: pageinfo2.pageIndex,
       pageSize: pageinfo2.pageSize,
     })
@@ -165,6 +166,7 @@ onMounted(() => {
 });
 onBeforeUpdate(()=>{
     tabValue.value=route.path
+    console.log("route",tabValue.value)
 })
 </script>
 

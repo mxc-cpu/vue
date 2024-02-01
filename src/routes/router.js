@@ -55,6 +55,7 @@ let routes = [
         children: [
             {
                 path: '/Detail/:id',
+               
                 component: () => import("../views/ArticleDetail.vue"),
             },
             {
@@ -74,16 +75,25 @@ let routes = [
         children: [
             {
                 path: '/Dynamics/:id',
+                props: true,
                 component: () => import("../views/DynamicsList.vue"),
             },
-        {path: '/focus/',
+        {   name: 'focus',
+            path: '/focus/:id',
         component: () => import("../views/FocusAndFan.vue"),
            
-        },{
-            path: '/fan/',
+        },{ name:'fan',
+            path:'/fan/:id',
         component: () => import("../views/FocusAndFan.vue"),
         }
-        
+        ,{  name:'message',
+            path: '/message/:id',
+        component: () => import("../views/MessageList.vue"),
+        }
+        ,{  name:'collect',
+        path: '/collect/:id',
+        component: () => import("../views/CollectList.vue"),
+    }
         ]
     }
 

@@ -154,7 +154,7 @@ const options = [
     key: "personal",
     props: {
       onClick: () => {
-        router.push("/Personal");
+        router.push("/Dynamics/"+`${ userId.value}`);
       },
     },
   },

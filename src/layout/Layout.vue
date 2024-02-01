@@ -55,7 +55,7 @@
 
 <script setup>
 import { computed, reactive, ref } from "vue";
-import Asidebox from "../components/Asidebox.vue";
+import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
 import { newestArticle } from "../api/articleApi";
 

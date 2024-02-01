@@ -65,9 +65,7 @@
             <n-tab-pane tab="我的动态" name="plane2">
               <BlogdynamicsList :user-id="store.userId" />
             </n-tab-pane>
-            <n-tab-pane tab="消息" name="plane3">
-              <MessageList />
-            </n-tab-pane>
+           
           </n-tabs>
 
           <!--/动态列表-->

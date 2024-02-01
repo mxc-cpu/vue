@@ -1,4 +1,5 @@
 <template>
+    <n-card >
     <div class="columns ">
         <div class="column is-two-fifth">
             <n-button text style="font-size: 15px">
@@ -34,7 +35,8 @@
             </n-button>
         </div>
     </div>
-
+    <n-divider style="margin-top: 0px; "></n-divider>
+    
     <MessageItem v-for="(item, index) in MessageListInfo.arr " :key="index" :action="item.action"
         :action-object="item.actionObject" :user-name="item.userName" :user-link="`/PersonalCenter/${item.id}`"
         :message-link="item.messageLink">
@@ -47,10 +49,11 @@
 
     </MessageItem>
 
-    <div class="level py-6 ">
+    <div class="level py-5 ">
         <n-pagination class="level-item has-text-centered" v-model:page="pageinfo.pageIndex" :page-size="pageinfo.pageSize" :page-count="pageCount"
             @update:page="loadDynamics" />
     </div>
+</n-card >
 </template>
 
 <script setup>
