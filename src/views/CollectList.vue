@@ -19,10 +19,19 @@
     <tbody>
         <tr  v-for="(item, index) in collect.arr">
             <td  style="width: 90%;">
-          <router-link   :to="`/Detail/${item.artileId}`">
+          <router-link v-if="item.isExist"  :to="`/Detail/${item.artileId}`">
          <p style="text-decoration: underline;"> {{ item.title }}</p>
-          </router-link></td> 
+          </router-link>
         
+         
+         <a title="该文章已经删除"  @click="mess" v-else style="text-decoration:line-through; ">  {{ item.title }}</a> 
+         
+        
+        </td>
+        
+        
+     
+         
           <td ><a @click="del(item.id)">删除</a></td>
    
    
@@ -75,6 +84,29 @@ var pageinfo = reactive({
 })
 
 const del = (id) => {
+  dialog.warning({
+    title: "注意",
+    content: "该文章已经弃你而去，你是否删除",
+    positiveText: "是，我心意已决",
+    negativeText: "不，留个念想吧",
+    onPositiveClick: () => {
+      DelCollectById(id).then((res) => {
+        if (res.data.success == true) {
+            loadCollect()
+          message.info("删除成功，忘了吧");
+        } else {
+            loadCollect()
+          message.info("删除失败，阴魂不散");
+        }
+      });
+    },
+    onNegativeClick: () => {
+      message.info("这里记录的是过去美好的记忆");
+    },
+  });
+};
+
+const mess = (id) => {
   dialog.warning({
     title: "注意",
     content: "你要删除该收藏吗",

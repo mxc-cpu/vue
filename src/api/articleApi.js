@@ -35,3 +35,6 @@ export const AddArticle=async(addInfo)=>{
 export const newestArticle=async()=>{
     return await axios.get('/Article/NewestArticle')
 }
+export const DelArticle = async(id)=>{
+    return await axios.get('/Article/DelArticle/'+id)
+}

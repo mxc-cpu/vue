@@ -6,9 +6,11 @@
             </div>
         </div>
         <div style="padding:20px;width:100%">
+            <n-dialog-provider >
             <n-message-provider>
             <router-view></router-view>
            </n-message-provider>
+           </n-dialog-provider>
         </div>
     </div>
    
@@ -21,8 +23,7 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
-const message = inject("message")
-const axios = inject("axios")
+
 
 
 

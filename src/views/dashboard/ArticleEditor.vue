@@ -27,14 +27,12 @@
                   <n-button @click="toUpdate(item)">修改</n-button>
                 </div>
                 <div class="column">
-                  <n-button @click="toDelete(item)">删除</n-button>
+                  <n-button @click="toDelete(item.id)">删除</n-button>
                 </div>
                 <div class="column is-half">
                   <n-switch
-                  
                     v-model:value="item.isTap"
-                    @update:value="SetTap(item.isTap,item)"
-                    
+                    @update:value="SetTap(item.isTap, item)"
                     style="height: 35px"
                   >
                     <template #checked> 置顶 </template>
@@ -60,6 +58,7 @@
       <n-form>
         <n-form-item label="标题">
           <n-input v-model:value="addArticle.title" placeholder="请输入标题" />
+          {{ addArticle.title }}
         </n-form-item>
         <n-form-item label="分区">
           <n-select
@@ -98,6 +97,7 @@
       <n-form>
         <n-form-item label="标题">
           <n-input
+            v-filter
             v-model:value="updateArticle.title"
             placeholder="请输入标题"
           />
@@ -140,17 +140,19 @@ import {
   UploadArticleCover,
   UpdateArticle,
   AddArticle,
+  DelArticle,
 } from "../../api/articleApi";
 import RichTextEditor from "../../components/RichTextEditor.vue";
 import { CategoryGetList, ByCategoryName } from "../../api/categoryApi";
 import { loginState } from "../../store/StoreLogin";
-import { useMessage } from "naive-ui";
+import { useMessage ,useDialog} from "naive-ui";
 import { AddTap, DelTap } from "../../api/tapApi.js";
 
+const dialog = useDialog();
 const userState = loginState();
 let checkis = ref(false);
 let check = ref(false);
-const dialog = inject("dialog");
+
 const axios = inject("axios");
 let pageCount = ref(1);
 const message = useMessage();
@@ -195,7 +197,7 @@ const updatePublished = (checked) => {
 };
 //置顶
 const SetTap = (value, item) => {
-    console.log("ddd",value,item)
+  console.log("ddd", value, item);
   if (value) {
     let info = reactive({
       tapArticleId: item.id,
@@ -212,8 +214,8 @@ const SetTap = (value, item) => {
       })
       .catch((error) => console.log(error));
   } else {
-    console.log("item的Id",item.id)
-    DelTap(item.articleId)
+    console.log("item的Id", item.id);
+    DelTap(item.id)
       .then((res) => {
         if (res.data.success == true) {
           message.success("取消置顶");
@@ -375,8 +377,20 @@ const add = () => {
   AddArticle(addArticle)
     .then((res) => {
       if (res.data.success == true) {
-        message.success(res.data.message);
-        loadBlogs();
+      if ( res.data.message=="认真点!就这还想申请精品"){
+       
+  console.log("xxx")
+  dialog.error({
+          title: res.data.message,
+          content: res.data.data,
+          positiveText: '好的',
+        
+        })
+
+
+      }
+      else{message.success(res.data.data + res.data.message);
+        loadBlogs();}
       } else {
         message.error("新增失败", res.data.message);
       }
@@ -385,6 +399,9 @@ const add = () => {
       message.error(error);
     });
 };
+
+
+
 
 const toPage = async (pageNum) => {
   pageInfo.page = pageNum;
@@ -424,15 +441,17 @@ const update = async () => {
   // }
 };
 
-const toDelete = async (blog) => {
-  let res = await axios.delete("/blog/_token/delete?id=" + blog.id);
-  if (res.data.code == 200) {
-    message.info(res.data.msg);
-    loadBlogs();
-  } else {
-    message.error(res.data.msg);
-  }
+const toDelete = async (id) => {
+  DelArticle(id).then((res) => {
+    if (res.data.success == true) {
+      message.info(res.data.data);
+      loadBlogs();
+    } else {
+      message.error(res.data.data);
+    }
+  });
 };
+
 </script>
 
 <style lang="scss" scoped></style>

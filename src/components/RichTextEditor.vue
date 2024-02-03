@@ -7,7 +7,7 @@
       :mode="mode"
       style="border-bottom: 1px solid #ccc"
     />
-    <Editor
+    <Editor 
       :defaultConfig="editorConfig"
       :mode="mode"
       v-model="valueHtml"
