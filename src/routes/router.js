@@ -37,6 +37,11 @@ let routes = [
                 name: 'articleEditor',
                 component: () => import("../views/dashboard/ArticleEditor.vue")
             },
+            {
+                path: "/CompilationsEditor",
+                name: 'CompilationsEditor',
+                component: () => import("../views/dashboard/CompilationsEditor.vue")
+            }
         ]
     },
     {

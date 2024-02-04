@@ -120,7 +120,7 @@
           <n-checkbox
             @update:checked="updatePublished"
             :default-checked="updateArticle.isPublished"
-            v-model:checked="checkis"
+            
             label="是否发布"
           />
         </n-form-item>
@@ -323,6 +323,7 @@ const loadBlogs = async () => {
     .then((res) => {
       if (res.data.success === true) {
         blogListInfo.value = res.data.data.dataList;
+        console.log("0",blogListInfo.value)
         pageCount.value =
           parseInt(res.data.data.recordCount / pageinfo.pageSize) +
           (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
@@ -381,10 +382,14 @@ const add = () => {
        
   console.log("xxx")
   dialog.error({
+          closable: false,
           title: res.data.message,
           content: res.data.data,
           positiveText: '好的',
-        
+          maskClosable: false,
+          onMaskClick: () => {
+            message.info("请点击好的");
+          },
         })
 
 
@@ -403,14 +408,10 @@ const add = () => {
 
 
 
-const toPage = async (pageNum) => {
-  pageInfo.page = pageNum;
-  loadBlogs();
-};
+
 
 const toUpdate = async (blog) => {
   tabValue.value = "update";
-
   updateArticle.id = blog.id;
   updateArticle.title = blog.title;
   updateArticle.Description = blog.description;

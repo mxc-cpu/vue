@@ -30,7 +30,7 @@ const route = useRoute()
 //菜单
 let menus = [
     { name: "文章管理", href: "/articleEditor" },
-    { name: "分类管理", href: "/category" },
+    { name: "分类管理", href: "/CompilationsEditor" },
     { name: "退出", href: "logout" },
 ];
 

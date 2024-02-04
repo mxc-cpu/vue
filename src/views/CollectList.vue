@@ -85,10 +85,15 @@ var pageinfo = reactive({
 
 const del = (id) => {
   dialog.warning({
+    closable: false,
     title: "注意",
     content: "该文章已经弃你而去，你是否删除",
     positiveText: "是，我心意已决",
     negativeText: "不，留个念想吧",
+    maskClosable: false,
+          onMaskClick: () => {
+            message.info("二选一");
+          },
     onPositiveClick: () => {
       DelCollectById(id).then((res) => {
         if (res.data.success == true) {
@@ -108,10 +113,15 @@ const del = (id) => {
 
 const mess = (id) => {
   dialog.warning({
+    closable: false,
     title: "注意",
     content: "你要删除该收藏吗",
     positiveText: "是的我义无反顾",
     negativeText: "不了我有所留恋",
+    maskClosable: false,
+          onMaskClick: () => {
+            message.info("二选一");
+          },
     onPositiveClick: () => {
       DelCollectById(id).then((res) => {
         if (res.data.success == true) {
