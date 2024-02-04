@@ -61,7 +61,7 @@ export const loginState = defineStore(
 
                 const decoded = jwtToken.decodeJwt(token)
                 //保存用户id
-                this.userId = decoded.id
+                this.userId = Number( decoded.id)
 
                 //用异步的方法同时获取用户的名字和获取用户的头像，效率二倍
                 const [avatarOf, nameOf] = await Promise.all([(GetUserAvatar(decoded.id)), (GetUserName(decoded.id))])

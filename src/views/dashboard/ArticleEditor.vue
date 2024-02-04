@@ -133,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, onMounted } from "vue";
+import { ref, reactive,  onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
   ArticlePageByuserAll,
@@ -152,13 +152,10 @@ const dialog = useDialog();
 const userState = loginState();
 let checkis = ref(false);
 let check = ref(false);
-
-const axios = inject("axios");
 let pageCount = ref(1);
 const message = useMessage();
 //分类选项
 let categortyOptions = ref([]);
-var categortyValue = ref(0);
 const blogListInfo = ref([]);
 //标签页
 const tabValue = ref("list");
@@ -340,7 +337,7 @@ const loadCategorys = async () => {
   CategoryGetList()
     .then((res) => {
       if (res.data.success == true) {
-        console.log("uhfopaj", res.data.data);
+        
         res.data.data.forEach((element) => {
           var item = {
             label: element.categoryName,
@@ -358,7 +355,7 @@ const loadCategorys = async () => {
 };
 // 获取分类名
 const getname = () => {
-  console.log("eiayufpuwqhnap[foinq[pfimnq[pifm[qpiomeqwp[ofm]]]]]");
+
 
   ByCategoryName(addArticle.categoryId)
     .then((res) => {
@@ -380,7 +377,7 @@ const add = () => {
       if (res.data.success == true) {
       if ( res.data.message=="认真点!就这还想申请精品"){
        
-  console.log("xxx")
+
   dialog.error({
           closable: false,
           title: res.data.message,
@@ -404,10 +401,6 @@ const add = () => {
       message.error(error);
     });
 };
-
-
-
-
 
 
 const toUpdate = async (blog) => {
@@ -443,13 +436,36 @@ const update = async () => {
 };
 
 const toDelete = async (id) => {
-  DelArticle(id).then((res) => {
+  
+  dialog.warning({
+    title: "警告",
+    content: "是否要删除你的努力成果",
+    positiveText: "我想写个更好的",
+    negativeText: "留下吧",
+    maskClosable: false,
+    onMaskClick: () => {
+      message.info("请选择");
+    },
+    onPositiveClick: async () => {
+      DelArticle(id).then((res) => {
     if (res.data.success == true) {
       message.info(res.data.data);
+      if( blogListInfo.value.length==1){
+                    
+        if( pageinfo.pageIndex!=1){
+        pageinfo.pageIndex=pageinfo.pageIndex-1}else{
+            pageinfo.pageIndex=1
+        }
+
+       }
       loadBlogs();
     } else {
       message.error(res.data.data);
     }
+  });
+     
+    },
+    onNegativeClick: () => {},
   });
 };
 

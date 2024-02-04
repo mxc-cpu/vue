@@ -24,7 +24,7 @@
           </router-link>
         
          
-         <a title="该文章已经删除"  @click="mess" v-else style="text-decoration:line-through; ">  {{ item.title }}</a> 
+         <a title="该文章已经删除"  @click="del(item.id)" v-else style="text-decoration:line-through; ">  {{ item.title }}</a> 
          
         
         </td>
@@ -32,7 +32,7 @@
         
      
          
-          <td ><a @click="del(item.id)">删除</a></td>
+          <td ><a @click="mess(item.id)">删除</a></td>
    
    
        

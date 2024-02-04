@@ -30,20 +30,21 @@ let routes = [
         path: '/Editor',
         name: 'Editor',
         component: () => import("../views/dashboard/Dashboard.vue"),
-        redirect: '/articleEditor',
+        redirect: '/Editor/articleEditor',
         children: [
             {
-                path: "/articleEditor",
+                path: "/Editor/articleEditor",
                 name: 'articleEditor',
                 component: () => import("../views/dashboard/ArticleEditor.vue")
             },
             {
-                path: "/CompilationsEditor",
+                path: "/Editor/CompilationsEditor",
                 name: 'CompilationsEditor',
                 component: () => import("../views/dashboard/CompilationsEditor.vue")
             }
         ]
     },
+    
     {
         path: '/Login',
         component: () => import("../views/Login.vue")
