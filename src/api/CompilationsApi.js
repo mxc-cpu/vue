@@ -17,8 +17,8 @@ export const DelArticleToCompilations=(id)=>{
 export const DelCompilationsById=(id)=>{
     return  axios.get('/Compilations/DelCompilationsById/'+id)
 }
-export const QueryCompilationsArticleById=(id)=>{
-    return  axios.get('/Compilations/QueryCompilationsArticleById/'+id)
+export const QueryCompilationsArticleById=async(id)=>{
+    return await axios.get('/Compilations/QueryCompilationsArticleById/'+id)
 }
 export const  QueryAllUserCompilationsById=async(id)=>{
     return await axios.get('/Compilations/QueryAllUserCompilationsById/'+id)

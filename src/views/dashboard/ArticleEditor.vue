@@ -58,7 +58,6 @@
       <n-form>
         <n-form-item label="标题">
           <n-input v-model:value="addArticle.title" placeholder="请输入标题" />
-          {{ addArticle.title }}
         </n-form-item>
         <n-form-item label="分区">
           <n-select
@@ -147,7 +146,8 @@ import { CategoryGetList, ByCategoryName } from "../../api/categoryApi";
 import { loginState } from "../../store/StoreLogin";
 import { useMessage ,useDialog} from "naive-ui";
 import { AddTap, DelTap } from "../../api/tapApi.js";
-
+import{CompilationsListStore} from "../../store/StoreCompilations";
+const comStore=CompilationsListStore();
 const dialog = useDialog();
 const userState = loginState();
 let checkis = ref(false);
@@ -165,10 +165,26 @@ const pageinfo = reactive({
   pageIndex: 1,
   pageSize: 2,
 });
+//路由
+const router = useRouter()
+const route = useRoute()
 
 onMounted(() => {
+  
+  if (route.params.tap!=null){
+   
+   
+    updateArticle.id = comStore.updateArticle.id;
+  updateArticle.title = comStore.updateArticle.title;
+  updateArticle.Description = comStore.updateArticle.description;
+  updateArticle.imageUrl = comStore.updateArticle.imageUrl;
+  updateArticle.categoryName = comStore.updateArticle.categoryName;
+  updateArticle.isPublished = comStore.updateArticle.isPublished;
+    tabValue.value =route.params.tap;
+
+  }else{
   loadBlogs();
-  loadCategorys();
+  loadCategorys();}
 });
 
 //是否发布（新增）

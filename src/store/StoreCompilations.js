@@ -5,9 +5,10 @@ export const CompilationsListStore = defineStore
     ('CompilationsListStore', {
         state: () => ({
             CompilationsData: [],
-            num:0,
+           
+            updateArticle:[]
         }), actions: {
-            add(id) {this.num=10; console.log("numnum",this.num)},
+            
              QueryCompilations(id) {
                  QueryAllUserCompilationsById(id).then((res) => {
                     if (res.data.success == true) {

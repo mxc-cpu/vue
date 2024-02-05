@@ -38,6 +38,17 @@ let routes = [
                 component: () => import("../views/dashboard/ArticleEditor.vue")
             },
             {
+                path: "/Editor/articleEditor/:tap",
+                name: 'articleEditorUpate',
+                component: () => import("../views/dashboard/ArticleEditor.vue")
+            },
+            {
+                path: "/Editor/CompilationsEditor/:id",
+                name: 'CompilationsArticleEditor',
+                component: () => import("../views/dashboard/ArticleEditor.vue")
+            },
+          
+            {
                 path: "/Editor/CompilationsEditor",
                 name: 'CompilationsEditor',
                 component: () => import("../views/dashboard/CompilationsEditor.vue")
@@ -79,9 +90,8 @@ let routes = [
         component:()=>import("../layout/PersonalCenter.vue"),
         redirect: '/Dynamics/:id',
         children: [
-            {
+            {   name: 'dynamics',
                 path: '/Dynamics/:id',
-                props: true,
                 component: () => import("../views/DynamicsList.vue"),
             },
         {   name: 'focus',

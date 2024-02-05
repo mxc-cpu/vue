@@ -13,11 +13,18 @@
 
       <ul class="menu-list py-1">
         <li>
-          <router-link to="/Editor/CompilationsEditor">合集列表</router-link>
-          <ul  v-for="(menu, index) in comStore.CompilationsData">
+          
+          <router-link    to="/Editor/CompilationsEditor">合集列表
+            
+          </router-link>
+          <!-- <n-button  size="large" text @click="sw">
+            <n-icon size="20"  style="transform:translate(30px,5px);" ><ArrowBarDown  /></n-icon>
+           
+          </n-button>
+          <ul v-show="isShowList" v-for="(menu, index) in comStore.CompilationsData">
     
             <router-link :to="`/Editor/CompilationsEditor/${menu.id}`">{{ menu.compilationsName }}</router-link>
-          </ul>
+          </ul> -->
         </li>
       </ul>
     
@@ -43,17 +50,24 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, h, onBeforeMount, onBeforeUpdate, onMounted } from "vue";
+import { ref, reactive, inject, h, onBeforeMount, onBeforeUpdate, onMounted, isShallow } from "vue";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { QueryAllUserCompilationsById } from "../../api/CompilationsApi";
 import { loginState } from "../../store/StoreLogin";
 import{CompilationsListStore} from "../../store/StoreCompilations";
+import{ChevronDown,ArrowDown,ArrowNarrowDown,ArrowBarDown} from "@vicons/tabler"
 const store = loginState();
 const comStore=CompilationsListStore();
 const router = useRouter();
 const route = useRoute();
 const showCard = ref(false);
-let menus = ref([]);
+
+let isShowList=ref(false)
+
+const sw=()=>{
+  console.log(isShowList)
+  isShowList.value=!isShowList.value
+}
 
 //获得合集
 const getCompilations =  () => {

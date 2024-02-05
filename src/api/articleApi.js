@@ -9,6 +9,9 @@ export const ArticleGetDetail=async(id)=>{
 export const GetUserIDByArticleId=async(ArticleId)=>{
     return await axios.get('/Article/GetUserByArticleId/'+ArticleId)
 }
+export const QueryUserArticleByList=async(userId)=>{
+    return await axios.get('/Article/QueryUserArticleByList/'+userId)
+}
 export const  ArticlePageByuser=async(pageInfo)=>{
     return await axios.post('/Article/PageQueryByList',pageInfo)
 }
