@@ -1,3 +1,4 @@
+import { info } from 'sass';
 import axios from '../api/apiConfig';
 export const ArticlePage=async(pageInfo)=>{
    
@@ -40,4 +41,7 @@ export const newestArticle=async()=>{
 }
 export const DelArticle = async(id)=>{
     return await axios.get('/Article/DelArticle/'+id)
+}
+export const UpdateSeeCheck=async(info)=>{
+    return await axios.post('/Article/UpdateCheckSum',info)
 }

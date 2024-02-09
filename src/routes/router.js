@@ -80,6 +80,11 @@ let routes = [
                 name: 'ArticleListByuser',
                 component: () => import("../views/ArticleList.vue")
             },
+            {
+                path: '/AreticleListByCompilationsId/:CompilationsId/:owningUserId',
+                name: 'CompilationsArticle',
+                component: () => import("../views/ArticleList.vue")
+            }
             
 
         ],

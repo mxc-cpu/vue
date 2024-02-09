@@ -35,11 +35,11 @@
             <n-breadcrumb separator="|" style="width: 20px;">
                 <n-breadcrumb-item>
                     <UserOutlined></UserOutlined>作者:
-                    <router-link :to="{ path: '/' }" class="has-text-link">
+                    <a @click="getAuthorId"  class="has-text-link">
                         <slot name="author">
                             {{ props.author }}
                         </slot>
-                    </router-link>
+                    </a>
                 </n-breadcrumb-item>
                 <n-breadcrumb-item>
                     <ClockCircleOutlined></ClockCircleOutlined>发布时间:
@@ -93,6 +93,10 @@ import { reactive, ref,onBeforeUpdate,onMounted } from 'vue';
 import { DoUpvote,YetUpvote } from '../api/upvoteApi';
 import { loginState } from '../store/StoreLogin';
 import { useMessage } from 'naive-ui';
+import { GetUserIDByArticleId } from '../api/articleApi';
+import { useRoute ,useRouter} from 'vue-router';
+const route=useRoute()
+const router =useRouter()
 const props = defineProps({
     
     id:{ type:String, default: 0,required: true },
@@ -116,6 +120,7 @@ const cloorActive= '#ff9980'
 const colorHidden='#DCDCDC'
 let color= ref(colorHidden)
 let isUpvote= ref(true)
+
 onMounted(()=>{
     yetUpvote()
     sum.value=props.upvoteSum
@@ -171,7 +176,15 @@ const upvote=()=>{
 }
 }
 
+const getAuthorId=()=>{
+    
+    GetUserIDByArticleId(props.id).then(res=>{
+        if(res.data.success==true){
 
+router.push(`/ArticleListByuser/${res.data.data}`)
+        }
+    })
+}
 
 </script>
 

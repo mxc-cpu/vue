@@ -1,8 +1,9 @@
 <template>
     <n-message-provider>
+
     <TapArticleList :user-id="userId"></TapArticleList>
   <n-space vertical size="large">
-
+   
     <ArticleItem v-for="(item, index) in articleDatas.arr " :key="index" :imageUrl="item.imageUrl" :description="item.description" :id="item.id" :ref="`sm${index}`" 
       :detailLink="`/Detail/${item.id}`" :upvoteSum="item.upvoteSum">
     
@@ -32,6 +33,7 @@ import { ArticlePage, ArticlePageByuser } from "../api/articleApi"
 import { routes, } from '../routes/router';
 import { useRouter, useRoute,  } from 'vue-router'
 import { ArticlePageByCategory } from "../api/categoryApi"
+import {PageQueryCompilationsArticleById} from "../api/CompilationsApi"
 import TapArticleList from '../components/TapArticleList.vue';
 
 const router = useRouter()
@@ -58,7 +60,7 @@ var articleDatas = reactive({
 })
 
 let sum=ref(null)
-var pageCount = ref(1);
+
 var categoryId = ref(route.params.categoryId);
 let userId=ref();
 var pageinfo = reactive({
@@ -66,6 +68,7 @@ var pageinfo = reactive({
   pageSize: 9,
 
 })
+var pageCount = ref(1);
 
 
 
@@ -117,6 +120,25 @@ const loadBlogs = async (page = 0) => {
       console.log("未知错误，查询失败");
     });
   } 
+  else if (route.params.CompilationsId){
+    const info = reactive({
+      Id: route.params.CompilationsId,
+      pageIndex: pageinfo.pageIndex,
+      pageSize: pageinfo.pageSize,
+    })
+   
+    await PageQueryCompilationsArticleById(info).then((res) => {
+      if (res.data.success === true) {
+        articleDatas.arr = res.data.data.dataList
+      
+        pageCount.value = parseInt(res.data.data.recordCount / pageinfo.pageSize) + (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
+  
+      }
+      else {
+
+      }
+    })
+  }
   else {
     await ArticlePage(pageinfo).then((res) => {
       if (res.data.success === true) {

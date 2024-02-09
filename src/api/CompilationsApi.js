@@ -1,5 +1,5 @@
 import axios from '../api/apiConfig';
-export const  PageQuery=(info)=>{
+export const  PageQuery= (info)=>{
     return   axios.post('/Compilations/PageQuery',info)
 }
 export const AddCompilations=(info)=>{
@@ -22,4 +22,7 @@ export const QueryCompilationsArticleById=async(id)=>{
 }
 export const  QueryAllUserCompilationsById=async(id)=>{
     return await axios.get('/Compilations/QueryAllUserCompilationsById/'+id)
+}
+export const  PageQueryCompilationsArticleById=async(info)=>{
+    return await axios.post('/Compilations/PageQueryCompilationsArticleById/',info)
 }

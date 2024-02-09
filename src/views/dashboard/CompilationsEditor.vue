@@ -1,12 +1,14 @@
 <template>
   <div>
-    <!--    :addable="addable":closable="closable"
+    <!--    :addable="addable"
       tab-style="min-width: 80px;"
-      @close="handleClose"@add="handleAdd"-->
+      @add="handleAdd"-->
 
     <n-tabs
       v-if="CompilationsList != null"
       v-model:value="tabvalue"
+      :closable="closable"
+      @close="handleClose"
       type="card"
     >
       <n-tab-pane name="list" tab="列表" key="panel">
@@ -54,7 +56,12 @@
         :name="panel.CompilationsName"
         :tab="panel.CompilationsName"
       >
-      <n-button @click="showAddLinkModel = true,canAddLinkArticle(panel.id,indexbase)">添加文章关联</n-button>
+        <n-button
+          @click="
+            (showAddLinkModel = true), canAddLinkArticle(panel.id, indexbase)
+          "
+          >添加文章关联</n-button
+        >
         <n-list
           class="box"
           v-for="(item, index) in panel.list"
@@ -92,7 +99,6 @@
                       >删除</n-button
                     >
                   </div>
-                  
                 </div>
               </div>
             </template>
@@ -173,28 +179,31 @@
     </n-modal>
 
     <n-modal
-    :mask-closable="false"
+      :mask-closable="false"
       v-model:show="showAddLinkModel"
       @after-leave="clearArticle"
       preset="dialog"
       title="Dialog"
     >
-    <template #header>
+      <template #header>
         <div>添加文章关联</div>
       </template>
-    <n-checkbox-group v-model:value="comRef" @update:value="selectArticle">
-      <n-grid v-for="item in addArticleLinkData"  :y-gap="10" :cols="1">
-        <n-gi>
-         <n-checkbox :value="item.id"  >{{ item.title }} 发布时间: {{ item.releaseDate }} 分类{{item.categoryName}}</n-checkbox>
-         </n-gi>
-         
-      </n-grid>
-      
-   
-  </n-checkbox-group>
-  <template #action>
+      <n-checkbox-group v-model:value="comRef" @update:value="selectArticle">
+        <n-grid v-for="item in addArticleLinkData" :y-gap="10" :cols="1">
+          <n-gi>
+            <n-checkbox :value="item.id"
+              >{{ item.title }} 发布时间: {{ item.releaseDate }} 分类{{
+                item.categoryName
+              }}</n-checkbox
+            >
+          </n-gi>
+        </n-grid>
+      </n-checkbox-group>
+      <template #action>
         <div>
-          <n-button  :disabled="isAddcan" @click="ArticleLinkCompilations">提交</n-button>
+          <n-button :disabled="isAddcan" @click="ArticleLinkCompilations"
+            >提交</n-button
+          >
         </div>
       </template>
     </n-modal>
@@ -203,7 +212,7 @@
 
 <script setup>
 import { loginState } from "../../store/StoreLogin";
-import { ref, reactive, onMounted, onBeforeUpdate } from "vue";
+import { ref, reactive, onMounted, onBeforeUpdate, computed } from "vue";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { useMessage, useDialog } from "naive-ui";
 import {
@@ -215,9 +224,7 @@ import {
   DelCompilationsById,
   QueryCompilationsArticleById,
 } from "../../api/CompilationsApi";
-import{
-  QueryUserArticleByList
-} from "../../api/articleApi";
+import { QueryUserArticleByList } from "../../api/articleApi";
 import { CompilationsListStore } from "../../store/StoreCompilations";
 import { Plane } from "@vicons/tabler";
 
@@ -235,99 +242,110 @@ const showAddModel = ref(false);
 const showUpdateModel = ref(false);
 const showAddLinkModel = ref(false);
 
-
-
+const panels = reactive([]);
+let closable = computed(() => {
+  return panels.length >= 1;
+});
 const CompilationsList = ref([]);
 const addCompilations = reactive({
   CompilationsName: "",
   CompilationsDescription: "",
   OwningUserId: store.userId,
 });
-let isAddcan=ref(false)
-const addArticleLinkData=ref([]);
-const comRef=ref()
-let selectCom=ref() 
+let isAddcan = ref(false);
+const addArticleLinkData = ref([]);
+const comRef = ref();
+let selectCom = ref();
 
-let  indexbase=ref()
+let indexbase = ref();
 
-const canAddLinkArticle= async(Id,indexbase2)=>{
-selectCom.value=Id;
-indexbase.value=indexbase2;
- 
-  const [userArticle, compilationArticle] = await Promise.all([
-  QueryUserArticleByList(store.userId),
-  QueryCompilationsArticleById(Id),
-        ]);
-        let user = userArticle.data.data;
-        let com =compilationArticle.data.data;
-       
-
-
-        for (var i = 0, userLen = user.length; i < userLen; i++) {
-	        for (var j = 0, comLen = com.length; j < comLen; j++ ) {
-           console.log("i",user[i].id)
-           console.log("j",com[j].id)
-	            if  (user[i].id==com[j].id) {
-	                break;
-	            }
-	        }
-	        if (j === comLen) {
-            addArticleLinkData.value.push(user[i])
-	        }
-	    }
-console.log("addArticleLinkData:",addArticleLinkData.value)
+const handleClose = (name) => {
+  // const { value: panels } = panelsRef;
+  const nameIndex = panels.findIndex((panelName) => {
+   //列表面板不在panels里面所以不能关闭面板
+   
+   return panelName.CompilationsName == name
     
-}
-const clearArticle=()=>{
-  addArticleLinkData.value=[]
-  comRef.value = [];
-}
-const  selectArticle=(value)=>{
-        comRef.value = value;
-        message.info(JSON.stringify(value));
-        if (comRef.value.length>0){
-          isAddcan.value=false;
-
-        }else{
-          isAddcan.value=true;
-        }
-      }
-const ArticleLinkCompilations = async()=>{
- let list=[]
-  for (var i = 0, comLen = comRef.value.length; i < comLen; i++){
-   let data= {
-     
-    articleId: comRef.value[i],
-    compilationsId: selectCom.value
-    }
-    console.log("dddx",comRef.value[i])
-    list.push(data)
+  });
+  if (!~nameIndex) return;
+  panels.splice(nameIndex, 1);
+  if (panels.length==0) {
+    //没有合集标签页打开了就回到列表页
+    tabvalue.value  = 'list';
+  }else{
+    //关闭标签后总是跳转到当前最小页
+    tabvalue.value  = panels[Math.min(nameIndex, panels.length - 1)].CompilationsName;
   }
-  
-  AddArticleToCompilations(list).then(res=>{
-    if(res.data.success==true){
-      message.success("添加成功")
-      showAddLinkModel.value=false;
-      
+};
+
+const canAddLinkArticle = async (Id, indexbase2) => {
+  selectCom.value = Id;
+  indexbase.value = indexbase2;
+
+  const [userArticle, compilationArticle] = await Promise.all([
+    QueryUserArticleByList(store.userId),
+    QueryCompilationsArticleById(Id),
+  ]);
+  let user = userArticle.data.data;
+  let com = compilationArticle.data.data;
+
+  for (var i = 0, userLen = user.length; i < userLen; i++) {
+    for (var j = 0, comLen = com.length; j < comLen; j++) {
+      console.log("i", user[i].id);
+      console.log("j", com[j].id);
+      if (user[i].id == com[j].id) {
+        break;
+      }
+    }
+    if (j === comLen) {
+      addArticleLinkData.value.push(user[i]);
+    }
+  }
+  console.log("addArticleLinkData:", addArticleLinkData.value);
+};
+const clearArticle = () => {
+  addArticleLinkData.value = [];
+  comRef.value = [];
+};
+const selectArticle = (value) => {
+  comRef.value = value;
+  message.info(JSON.stringify(value));
+  if (comRef.value.length > 0) {
+    isAddcan.value = false;
+  } else {
+    isAddcan.value = true;
+  }
+};
+const ArticleLinkCompilations = async () => {
+  let list = [];
+  for (var i = 0, comLen = comRef.value.length; i < comLen; i++) {
+    let data = {
+      articleId: comRef.value[i],
+      compilationsId: selectCom.value,
+    };
+    console.log("dddx", comRef.value[i]);
+    list.push(data);
+  }
+
+  AddArticleToCompilations(list).then((res) => {
+    if (res.data.success == true) {
+      message.success("添加成功");
+      showAddLinkModel.value = false;
+
       QueryCompilationsArticleById(selectCom.value).then((res) => {
-            if (res.data.success == true) {
-              
-              panels[indexbase.value].list = res.data.data;
-            } else {
-              console.log("错误");
-            }
-          });
+        if (res.data.success == true) {
+          panels[indexbase.value].list = res.data.data;
+        } else {
+          console.log("错误");
+        }
+      });
 
-          message.info(res.data.message);
-
+      message.info(res.data.message);
 
       clearArticle();
     }
-  })
-
-}
-
-
+  });
+};
 
 //分页数据
 const pageinfo = reactive({
@@ -347,13 +365,8 @@ onMounted(() => {
   loadCompilations();
 });
 
-const panels = reactive([]);
-
 //添加合集标签页
 const handleAdd = async (Id, Name) => {
-
-
-
   QueryCompilationsArticleById(Id).then((res) => {
     if (res.data.success == true) {
       console.log("卡速", Name);
@@ -389,7 +402,6 @@ const loadCompilations = async () => {
         parseInt(res.data.data.recordCount / pageinfo.pageSize) +
         (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
       comStore.QueryCompilations(store.userId);
-     
     } else {
       message.error("未知错误，查询失败");
     }

@@ -33,7 +33,17 @@
         </li>
       </ul>
     </div>
-
+    <div class="compilations" v-if="props.type == 'compilations' && props.compilationsData.length > 0">
+      <ul>
+        <li v-for="(item, index) in props.compilationsData" :key="index">
+          <router-link :to="`/AreticleListByCompilationsId/${item.id}/${item.owningUserId}`" >{{ item.compilationsName }}</router-link>
+        </li>
+      </ul>
+      <ul>
+        
+      </ul>
+    
+    </div>
     <div v-if="props.type == 'announcement'">
       <p>{{ props.announcementData }}</p>
     </div>
@@ -71,12 +81,22 @@
 
 <script setup>
 import { SearchOutlined } from "@ant-design/icons-vue";
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits ,reactive,computed} from "vue";
 import { router } from "../routes/router";
+import {PageQuery} from "../api/CompilationsApi";
 const props = defineProps({
+
+
+
   userId:{
     type: Number,
     default: 0,
+  },
+  compilations:{
+
+    type: String,
+    default: "合集",
+
   },
   name: {
     type: String,
@@ -86,8 +106,12 @@ const props = defineProps({
     type: String,
     default: "search",
     validator(value) {
-      return ["search", "news", "announcement,fan,focus"].includes(value);
+      return ["search", "news", "announcement,fan,focus,compilations"].includes(value);
     },
+  },
+  compilationsData:{
+    type: Array,
+    default: [],
   },
   newsData: {
     type: Array,
@@ -119,6 +143,18 @@ const emit = defineEmits(["GetSearchValue"]);
 const GetSearchValue = () => {
   emit("GetSearchValue", searchValue.value);
 };
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <style lang="scss" scoped>

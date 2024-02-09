@@ -63,9 +63,10 @@
               <n-icon size="50" :color="color2">
                 <Star />
               </n-icon>
-              <p>{{ collectState }}:</p>
+              <p>{{ collectState }}</p>
             </n-button>
           </div>
+
         </div>
       </div>
 
@@ -91,7 +92,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { ArticleGetDetail } from "../api/articleApi";
+import { ArticleGetDetail,UpdateSeeCheck } from "../api/articleApi";
 import Comment from "../components/comment.vue";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { Star, FileLike } from "@vicons/tabler";
@@ -136,9 +137,9 @@ const loadDetail = async () => {
         data.value = res.data.data;
         upvoteSum.value = data.value.upvoteSum;
       yetUpvote();
-  isyetCollect();  
-    
-    
+  isyetCollect() ;
+    //更新浏览次数
+    UpdateCheckSum();
     } else {
         console.log("没有找到");
       }
@@ -147,6 +148,25 @@ const loadDetail = async () => {
       console.log("mmmd", error);
     });
 };
+
+
+const  UpdateCheckSum=()=>{
+
+const info ={
+  ArticleId:route.params.id,
+  UserId:0
+}
+//如果是未登入的就根据ip地址
+if(store.userId==0){
+  console.log("IP",sessionStorage.getItem("ip"))
+   info.UserId= sessionStorage.getItem("ip");
+}else{
+ 
+  info.UserId= store.userId.toString()
+  console.log("IP",store.userId)
+}
+   UpdateSeeCheck(info).then(res=>{console.log("浏览")})
+}
 
 const back = () => {
   router.push("/");
