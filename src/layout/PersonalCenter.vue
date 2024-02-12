@@ -6,9 +6,9 @@
     <div class="container">
       <section class="hero is-primary is-small">
         <div class="hero-body" style="padding: 24px 283px">
-          <p class="title">Hi{{ name }} 欢迎</p>
+          <p class="title">Hi {{ store.name1 }} 欢迎</p>
           <p class="subtitle">欢迎参观我的园子</p>
-          <p class="subtitle has-text-right">dddd</p>
+          <p class="subtitle has-text-right">{{store.message}}</p>
         </div>
       </section>
       <n-grid cols="24" :x-gap="10" item-responsive>
@@ -28,7 +28,7 @@
       </n-message-provider>
         </n-grid-item>
         <n-grid-item span="0 400:8 600:5 800:5">
-          <Asidebox type="search" @GetSearchValue="searchCallBack"></Asidebox>
+     
 
           <Asidebox
             name="我的关注"
@@ -247,6 +247,10 @@ const loadfan = () => {
 };
 
 onMounted(() => {
+  loadfan();
+  loadfoucus();
+});
+onBeforeUpdate(()=>{
   loadfan();
   loadfoucus();
 });

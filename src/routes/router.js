@@ -52,6 +52,11 @@ let routes = [
                 path: "/Editor/CompilationsEditor",
                 name: 'CompilationsEditor',
                 component: () => import("../views/dashboard/CompilationsEditor.vue")
+            },
+            {
+                path: "/Editor/UserInfoEditor",
+                name: 'UserInfoEditor',
+                component: () => import("../views/dashboard/UserInfoEditor.vue")
             }
         ]
     },
@@ -99,6 +104,10 @@ let routes = [
                 path: '/Dynamics/:id',
                 component: () => import("../views/DynamicsList.vue"),
             },
+            {   name: 'dynamicsUser',
+            path: '/DynamicsUser/:id',
+            component: () => import("../views/DynamicsList.vue"),
+        },
         {   name: 'focus',
             path: '/focus/:id',
         component: () => import("../views/FocusAndFan.vue"),

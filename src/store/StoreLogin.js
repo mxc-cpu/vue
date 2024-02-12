@@ -49,6 +49,7 @@ export const loginState = defineStore(
         name1: '',
         avatarUrl: '',
         userId: 0,
+        message:'他什么都没写下',
     }),
     actions: {
 

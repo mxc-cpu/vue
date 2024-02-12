@@ -49,7 +49,7 @@
               我的文章
             </p>
           </RouterLink>
-          <RouterLink class="column" to="/">
+          <RouterLink class="column" :to="`/DynamicsUser/${props.userId}`">
             <p
               class="title is-5 has-text-link has-text-centered"
               style="text-align: right"

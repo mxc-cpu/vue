@@ -192,9 +192,9 @@
         <n-grid v-for="item in addArticleLinkData" :y-gap="10" :cols="1">
           <n-gi>
             <n-checkbox :value="item.id"
-              >{{ item.title }} 发布时间: {{ item.releaseDate }} 分类{{
-                item.categoryName
-              }}</n-checkbox
+              >{{ item.title }}
+               发布时间: {{ item.releaseDate }}
+                分类:{{ item.categoryName}}</n-checkbox
             >
           </n-gi>
         </n-grid>

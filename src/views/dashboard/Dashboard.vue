@@ -27,7 +27,9 @@
           </ul> -->
         </li>
       </ul>
-    
+      <ul class="menu-list py-1">
+        <li><router-link to="/Editor/userInfoEditor">账户管理</router-link></li>
+      </ul>
     </aside>
     <!-- <div v-for="(menu, index) in menus" @click="toPage(menu)">
                 {{ menu.name }}

@@ -31,6 +31,7 @@
                 </div>
                 <div class="column is-half">
                   <n-switch
+                    v-if="item.isPublished"
                     v-model:value="item.isTap"
                     @update:value="SetTap(item.isTap, item)"
                     style="height: 35px"
@@ -61,6 +62,7 @@
         </n-form-item>
         <n-form-item label="分区">
           <n-select
+          placeholder="请选择分区"
             v-model:value="addArticle.categoryId"
             :options="categortyOptions"
             @update:value="getname"
@@ -245,7 +247,7 @@ const addArticle = reactive({
   userId: Number(userState.userId),
   authorName: userState.name1,
   imageUrl: "",
-  categoryId: 0,
+  categoryId: null,
   categoryName: "",
   title: "",
   description: "",

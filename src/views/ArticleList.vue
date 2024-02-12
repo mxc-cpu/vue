@@ -6,7 +6,7 @@
    
     <ArticleItem v-for="(item, index) in articleDatas.arr " :key="index" :imageUrl="item.imageUrl" :description="item.description" :id="item.id" :ref="`sm${index}`" 
       :detailLink="`/Detail/${item.id}`" :upvoteSum="item.upvoteSum">
-    
+    {{ item.imageUrl }}
       <template #title>{{ item.title }}</template>
       <template #author>{{ item.authorName }}</template>
 
