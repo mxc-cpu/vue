@@ -153,7 +153,7 @@ if(store.userId!=null){
 
 
 const upvote=()=>{
-      if (store.userId!=null){
+      if (store.userId!=0){
     const info= reactive({
         ArticleId:props.id,
         userId:store.userId

@@ -57,7 +57,7 @@
 import { computed, reactive, ref } from "vue";
 import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
-import { newestArticle } from "../api/articleApi";
+import { newestArticle ,FuzzySearch} from "../api/articleApi";
 
 const newsData = reactive({ arr: [] });
 const hotnewsData = reactive([
@@ -109,9 +109,12 @@ const hotnewDataComp = computed(() => {
   return hotitemnewsData;
 });
 const searchValue1 = ref("");
+const searchList=ref();
 
 const searchCallBack = (Svalue) => {
   searchValue1.value = Svalue;
+
+
   console.log("ffff" + Svalue);
 };
 </script>

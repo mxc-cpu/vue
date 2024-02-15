@@ -223,7 +223,7 @@ import {
   DelArticleToCompilations,
   DelCompilationsById,
   QueryCompilationsArticleById,
-} from "../../api/CompilationsApi";
+} from "../../api/compilationsApi";
 import { QueryUserArticleByList } from "../../api/articleApi";
 import { CompilationsListStore } from "../../store/StoreCompilations";
 import { Plane } from "@vicons/tabler";

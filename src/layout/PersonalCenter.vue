@@ -122,11 +122,13 @@ const menuOptions= [
     }
   },
   {
-    label: () => h(
+    label: () =>  h(
+          
       RouterLink,
       {
+        
         to: {
-          name:"ArticleListByuser",
+            name:"ArticleListByuser",
           params: {
             userId:store.userId,
           }
@@ -265,30 +267,7 @@ onBeforeUpdate(()=>{
 @import "bulma/sass/base/_all.sass";
 @import "bulma/sass/helpers/_all.sass";
 
-.pp2 #message {
-  background-color: #f1eeee9f;
-  padding: 15px 15px 5px 15px;
-  display: inline-block;
-  border-radius: 4px;
-  margin: 10px;
-  position: relative;
-  display: block;
-}
 
-.pp2 #message::after {
-  content: "";
-  border: 8px solid #ffffff00;
-  border-right: 10px solid #f1eeee9f;
-  position: absolute;
-  top: 6px;
-  left: -17px;
-}
 
-.user {
-  height: 250px;
-}
 
-.ing_text {
-  width: 540px;
-}
 </style>

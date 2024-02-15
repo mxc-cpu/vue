@@ -45,3 +45,6 @@ export const DelArticle = async(id)=>{
 export const UpdateSeeCheck=async(info)=>{
     return await axios.post('/Article/UpdateCheckSum',info)
 }
+export const FuzzySearch=async(info)=>{
+    return await axios.post('/Article/FuzzySearch?FuzzyTitle='+info)
+}

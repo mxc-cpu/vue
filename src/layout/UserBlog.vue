@@ -59,7 +59,6 @@ import { GetUserName, GetUserAvatar } from "../api/getUserInfoApi";
 import {PageQuery} from "../api/CompilationsApi";
 const router = useRouter();
 const route = useRoute();
-
 const userState = loginState();
 
 let Title=ref("我的文章")
@@ -71,14 +70,15 @@ let name = ref();
 
 
 onMounted(() => {
-  GetcompilationsDataComp()
+
   getUserId();
   
 });
 
 onBeforeUpdate(() => {
-  GetcompilationsDataComp()
+
   getUserId();
+ 
   Title.value='我的文章'
 });
 
@@ -97,7 +97,12 @@ const GetcompilationsDataComp = async (page = 0) => {
   }
   if (route.params.owningUserId!=null){
     id=route.params.owningUserId
-  }else
+  }
+  if (route.params.userId==null){
+    console.log("kong",userId.value)
+    id=userId.value
+  }
+  else
   {
     id=route.params.userId
   }
@@ -142,6 +147,8 @@ const getUserId = async () => {
       .then(async (res) => {
         if (res.data.success == true) {
           userId.value = res.data.data;
+
+
           //      const value = await GetUserName(userId.value)
           //      const value2=await GetUserAvatar(userId.value)
           //    avatar.value= await value2.data.data
@@ -171,6 +178,7 @@ const getUserId = async () => {
 
     name.value = nameOf.data;
   }
+  GetcompilationsDataComp();
 };
 
 /**

@@ -59,7 +59,7 @@ var articleDatas = reactive({
   ]
 })
 
-let sum=ref(null)
+
 
 var categoryId = ref(route.params.categoryId);
 let userId=ref();

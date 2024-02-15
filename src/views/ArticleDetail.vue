@@ -66,7 +66,6 @@
               <p>{{ collectState }}</p>
             </n-button>
           </div>
-
         </div>
       </div>
 
@@ -85,14 +84,14 @@
 
     <!--评论-->
     <div class="card-content">
-      <Comment />
+      <Comment  :-artivle-id="data.id" :-user-id="userId"></Comment>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { ArticleGetDetail,UpdateSeeCheck } from "../api/articleApi";
+import { ArticleGetDetail, UpdateSeeCheck ,GetUserIDByArticleId} from "../api/articleApi";
 import Comment from "../components/comment.vue";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { Star, FileLike } from "@vicons/tabler";
@@ -121,10 +120,21 @@ let color2 = ref(colorHidden);
 let isUpvote = ref(true);
 let isCollect = ref(false);
 onMounted(() => {
+  getUserId();
   loadDetail();
- 
 });
 
+let userId=ref(0)
+
+const getUserId = async () => {
+  await GetUserIDByArticleId(route.params.id).then((res) => {
+    if (res.data.success == true) {
+     
+      userId.value = res.data.data;
+      console.log("用户ID", userId.value)
+    }
+  });
+};
 /**
  * 读取文章详情
  */
@@ -136,11 +146,11 @@ const loadDetail = async () => {
       if (res.data.success == true) {
         data.value = res.data.data;
         upvoteSum.value = data.value.upvoteSum;
-      yetUpvote();
-  isyetCollect() ;
-    //更新浏览次数
-    UpdateCheckSum();
-    } else {
+        yetUpvote();
+        isyetCollect();
+        //更新浏览次数
+        UpdateCheckSum();
+      } else {
         console.log("没有找到");
       }
     })
@@ -149,31 +159,28 @@ const loadDetail = async () => {
     });
 };
 
-
-const  UpdateCheckSum=()=>{
-
-const info ={
-  ArticleId:route.params.id,
-  UserId:0
-}
-//如果是未登入的就根据ip地址
-if(store.userId==0){
-  console.log("IP",sessionStorage.getItem("ip"))
-   info.UserId= sessionStorage.getItem("ip");
-}else{
- 
-  info.UserId= store.userId.toString()
-  console.log("IP",store.userId)
-}
-   UpdateSeeCheck(info).then(res=>{console.log("浏览")})
-}
-
-const back = () => {
-  router.push("/");
+const UpdateCheckSum = () => {
+  const info = {
+    ArticleId: route.params.id,
+    UserId: 0,
+  };
+  //如果是未登入的就根据ip地址
+  if (store.userId == 0) {
+    console.log("IP", sessionStorage.getItem("ip"));
+    info.UserId = sessionStorage.getItem("ip");
+  } else {
+    info.UserId = store.userId.toString();
+    console.log("IP", store.userId);
+  }
+  UpdateSeeCheck(info).then((res) => {
+    console.log("浏览");
+  });
 };
 
+
+
 const yetUpvote = () => {
-  if (store.userId != null) {
+  if (store.userId != 0) {
     const info = reactive({
       ArticleId: data.value.id,
       userId: store.userId,
@@ -195,7 +202,7 @@ const yetUpvote = () => {
 };
 
 const upvote = () => {
-  if (store.userId != null) {
+  if (store.userId != 0) {
     const info = reactive({
       ArticleId: data.value.id,
       userId: store.userId,
@@ -218,8 +225,8 @@ const upvote = () => {
   }
 };
 const isyetCollect = () => {
-  if (store.userId != null) {
-    message.info( data.value.id)
+  if (store.userId != 0) {
+    message.info(data.value.id);
     const info = reactive({
       ArticleId: data.value.id,
       userId: store.userId,
@@ -227,7 +234,7 @@ const isyetCollect = () => {
     YetCollect(info).then((res) => {
       if ((res.data.success = true)) {
         isCollect.value = res.data.data;
-        console.log("isCollect",isCollect.value)
+        console.log("isCollect", isCollect.value);
         if (isCollect.value) {
           collectState.value = "以收藏";
           color2.value = colorActive;
@@ -240,19 +247,19 @@ const isyetCollect = () => {
 };
 
 const collect = () => {
-  if (store.userId != null) {
+  if (store.userId != 0) {
     const info = reactive({
       ArticleId: data.value.id,
       title: data.value.title,
       userId: store.userId,
     });
     if (isCollect.value == false) {
-        AddCollect(info).then((res) => {
-            message.create(info.ArticleId)
+      AddCollect(info).then((res) => {
+        message.create(info.ArticleId);
         if (res.data.success == true) {
           isCollect.value = true;
           collectState.value = "以收藏";
-          message.info(res.data.data)
+          message.info(res.data.data);
           color2.value = colorActive;
         }
       });
