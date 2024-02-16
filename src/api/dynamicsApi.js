@@ -21,3 +21,15 @@ export const  PageFocus= async(info)=>{
 export const  PageFan=async(info)=>{
     return await axios.post('/Dynamics/PageQueryFanList/',info)
 }
+export const AddDynamics=async(info)=>{
+    return await axios.post('/Dynamics/AddDynamics/',info)
+}
+export const DelDynamics=async(id)=>{
+    return await axios.get('/Dynamics/DelDynamics/'+id)
+}
+export const pageQueryDynamicsByMyself=async(info)=>{
+    return await axios.post('/Dynamics/pageQueryDynamicsByMyself/',info)
+}
+export const pageQueryDynamics=async(info)=>{
+    return await axios.post('/Dynamics/pageQueryDynamics/',info)
+}

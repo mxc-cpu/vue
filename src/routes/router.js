@@ -162,7 +162,6 @@ router.beforeEach((to, from, next) => {
       alert("请先登入");
       next("/login");
     } else {
-      console.log("login", getToken());
       next();
     }
   }
@@ -177,11 +176,11 @@ router.beforeEach((to, from, next) => {
       alert("请先登入");
       next("/login");
     } else {
-      console.log("login", getToken());
       next();
     }
   }
-  next();
+  else{
+  next();}
 });
 
 export { router, routes };

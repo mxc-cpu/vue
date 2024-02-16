@@ -62,7 +62,7 @@
         </n-form-item>
         <n-form-item label="分区">
           <n-select
-          placeholder="请选择分区"
+            placeholder="请选择分区"
             v-model:value="addArticle.categoryId"
             :options="categortyOptions"
             @update:value="getname"
@@ -75,7 +75,7 @@
           <input type="file" :multiple="true" @change="uploadadd" />
         </n-form-item>
         <n-form-item label="内容">
-          <rich-text-editor v-model="addArticle.Description"></rich-text-editor>
+          <rich-text-editor v-model="addArticle.description"></rich-text-editor>
         </n-form-item>
         <n-form-item label="选项">
           <n-checkbox
@@ -121,7 +121,6 @@
           <n-checkbox
             @update:checked="updatePublished"
             :default-checked="updateArticle.isPublished"
-            
             label="是否发布"
           />
         </n-form-item>
@@ -134,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref, reactive,  onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
   ArticlePageByuserAll,
@@ -143,13 +142,14 @@ import {
   AddArticle,
   DelArticle,
 } from "../../api/articleApi";
+import { AddDynamics } from "../../api/DynamicsApi";
 import RichTextEditor from "../../components/RichTextEditor.vue";
 import { CategoryGetList, ByCategoryName } from "../../api/categoryApi";
 import { loginState } from "../../store/StoreLogin";
-import { useMessage ,useDialog} from "naive-ui";
+import { useMessage, useDialog } from "naive-ui";
 import { AddTap, DelTap } from "../../api/tapApi.js";
-import{CompilationsListStore} from "../../store/StoreCompilations";
-const comStore=CompilationsListStore();
+import { CompilationsListStore } from "../../store/StoreCompilations";
+const comStore = CompilationsListStore();
 const dialog = useDialog();
 const userState = loginState();
 let checkis = ref(false);
@@ -168,25 +168,22 @@ const pageinfo = reactive({
   pageSize: 2,
 });
 //路由
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 onMounted(() => {
-  
-  if (route.params.tap!=null){
-   
-   
+  if (route.params.tap != null) {
     updateArticle.id = comStore.updateArticle.id;
-  updateArticle.title = comStore.updateArticle.title;
-  updateArticle.Description = comStore.updateArticle.description;
-  updateArticle.imageUrl = comStore.updateArticle.imageUrl;
-  updateArticle.categoryName = comStore.updateArticle.categoryName;
-  updateArticle.isPublished = comStore.updateArticle.isPublished;
-    tabValue.value =route.params.tap;
-
-  }else{
-  loadBlogs();
-  loadCategorys();}
+    updateArticle.title = comStore.updateArticle.title;
+    updateArticle.Description = comStore.updateArticle.description;
+    updateArticle.imageUrl = comStore.updateArticle.imageUrl;
+    updateArticle.categoryName = comStore.updateArticle.categoryName;
+    updateArticle.isPublished = comStore.updateArticle.isPublished;
+    tabValue.value = route.params.tap;
+  } else {
+    loadBlogs();
+    loadCategorys();
+  }
 });
 
 //是否发布（新增）
@@ -338,7 +335,7 @@ const loadBlogs = async () => {
     .then((res) => {
       if (res.data.success === true) {
         blogListInfo.value = res.data.data.dataList;
-        console.log("0",blogListInfo.value)
+        console.log("0", blogListInfo.value);
         pageCount.value =
           parseInt(res.data.data.recordCount / pageinfo.pageSize) +
           (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
@@ -355,7 +352,6 @@ const loadCategorys = async () => {
   CategoryGetList()
     .then((res) => {
       if (res.data.success == true) {
-        
         res.data.data.forEach((element) => {
           var item = {
             label: element.categoryName,
@@ -373,8 +369,6 @@ const loadCategorys = async () => {
 };
 // 获取分类名
 const getname = () => {
-
-
   ByCategoryName(addArticle.categoryId)
     .then((res) => {
       if (res.data.success == true) {
@@ -389,28 +383,47 @@ const getname = () => {
     });
 };
 //添加文章
-const add = () => {
+const add = async () => {
   AddArticle(addArticle)
     .then((res) => {
       if (res.data.success == true) {
-      if ( res.data.message=="认真点!就这还想申请精品"){
-       
-
-  dialog.error({
-          closable: false,
-          title: res.data.message,
-          content: res.data.data,
-          positiveText: '好的',
-          maskClosable: false,
-          onMaskClick: () => {
-            message.info("请点击好的");
-          },
-        })
-
-
-      }
-      else{message.success(res.data.data + res.data.message);
-        loadBlogs();}
+        if (res.data.message == "认真点!就这还想申请精品") {
+          dialog.error({
+            closable: false,
+            title: res.data.message,
+            content: res.data.data,
+            positiveText: "好的",
+            maskClosable: false,
+            onMaskClick: () => {
+              message.info("请点击好的");
+            },
+          });
+        } else {
+          message.success(res.data.data + res.data.message);
+ //文章发表成功后就发布动态
+    //正则替换掉HTML标签
+    let regex=/(<([^>]+)>)/ig
+          let cont = addArticle.description;
+          console.log("没替换",cont)
+         cont=cont.replace(regex,"");
+          //截取33个字的内容
+          console.log("替换了",cont)
+          if (cont.length > 33) {
+            cont = cont.substring(0, 20) + "...";
+          }
+          const info = reactive({
+            UserId: userState.userId,
+            typeNmae: "发表了",
+            articleId: res.data.data,
+            dynamicsDescription: cont,
+          });
+        
+        
+         
+         AddDynamics(info)
+         
+          loadBlogs();
+        }
       } else {
         message.error("新增失败", res.data.message);
       }
@@ -419,6 +432,9 @@ const add = () => {
       message.error(error);
     });
 };
+
+
+
 
 
 const toUpdate = async (blog) => {
@@ -454,7 +470,6 @@ const update = async () => {
 };
 
 const toDelete = async (id) => {
-  
   dialog.warning({
     title: "警告",
     content: "是否要删除你的努力成果",
@@ -466,27 +481,24 @@ const toDelete = async (id) => {
     },
     onPositiveClick: async () => {
       DelArticle(id).then((res) => {
-    if (res.data.success == true) {
-      message.info(res.data.data);
-      if( blogListInfo.value.length==1){
-                    
-        if( pageinfo.pageIndex!=1){
-        pageinfo.pageIndex=pageinfo.pageIndex-1}else{
-            pageinfo.pageIndex=1
+        if (res.data.success == true) {
+          message.info(res.data.data);
+          if (blogListInfo.value.length == 1) {
+            if (pageinfo.pageIndex != 1) {
+              pageinfo.pageIndex = pageinfo.pageIndex - 1;
+            } else {
+              pageinfo.pageIndex = 1;
+            }
+          }
+          loadBlogs();
+        } else {
+          message.error(res.data.data);
         }
-
-       }
-      loadBlogs();
-    } else {
-      message.error(res.data.data);
-    }
-  });
-     
+      });
     },
     onNegativeClick: () => {},
   });
 };
-
 </script>
 
 <style lang="scss" scoped></style>

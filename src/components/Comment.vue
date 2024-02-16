@@ -184,6 +184,7 @@
 </template>
 
 <script setup>
+
 import { LikeOutlined } from "@ant-design/icons-vue";
 import { ref, reactive, onMounted, onBeforeUpdate } from "vue";
 import {
@@ -192,6 +193,7 @@ import {
   AddComment,
   UpdateUpvoteSum,
 } from "../api/commentApi";
+import { AddDynamics } from "../api/DynamicsApi";
 import { useMessage } from "naive-ui";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 
@@ -278,7 +280,8 @@ const UpdateCommentUpvote = (comid) => {
 
 
 const pushcoment = async (rid, pid, content) => {
-  if (store.userId != null) {
+  
+  if (store.userId != 0) {
     const info = {
       UserId: store.userId,
       ReplyId: rid,
@@ -294,6 +297,24 @@ const pushcoment = async (rid, pid, content) => {
         hidden();
 
         message.success("评论成功!");
+if(info.ParentId==0){
+ //截取33个字的内容
+         
+          if (info.Content.length > 33) {
+            info.Content= info.Content.substring(0, 20) + "...";
+          }
+          const dyInfo = reactive({
+            UserId: info.UserId,
+            typeNmae: "评论了",
+            articleId: info.ArticleId,
+            dynamicsDescription: info.Content,
+          });
+          //发表对文章的评论成功后就发布动态
+          AddDynamics(dyInfo).then( )
+          message.info("发布动态")
+        }
+
+
       } else {
         message.info(res.data.data + ":" + res.data.message);
       }
