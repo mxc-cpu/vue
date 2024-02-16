@@ -2,7 +2,7 @@
     <n-card >
     <div class="columns ">
         <div class="column is-two-fifth">
-            <n-button text style="font-size: 15px">
+            <n-button text style="font-size: 15px" @click="type='点赞',loadMessage()">
             <n-icon size="40" color="hsl(344, 95%, 61%)">
               <FileLike/>
          </n-icon>
@@ -11,7 +11,7 @@
         </div>
 
         <div class="column">
-            <n-button text style="font-size: 15px">
+            <n-button text style="font-size: 15px" @click="type='回复',loadMessage()">
         <n-icon size="40" color="#8a2be2">
               <Messages/>
          </n-icon>
@@ -19,7 +19,7 @@
            </n-button>
         </div>
         <div class="column ">
-            <n-button text style="font-size: 15px">
+            <n-button text style="font-size: 15px" @click="type='评论',loadMessage()">
             <n-icon size="40" color="hsl(204, 86%, 53%) ">
               <MessageDots/>
          </n-icon>
@@ -27,19 +27,19 @@
             </n-button>
         </div>
         <div class="column ">
-            <n-button text style="font-size: 15px">
+            <n-button text style="font-size: 15px" @click="type='系统',loadMessage()">
             <n-icon size="40" color="hsl(204, 71%, 39%)">
               <Menu2/>
          </n-icon>
-            全部
+            系统
             </n-button>
         </div>
     </div>
     <n-divider style="margin-top: 0px; "></n-divider>
     
-    <MessageItem v-for="(item, index) in MessageListInfo.arr " :key="index" :action="item.action"
-        :action-object="item.actionObject" :user-name="item.userName" :user-link="`/PersonalCenter/${item.id}`"
-        :message-link="item.messageLink">
+    <MessageItem v-for="(item, index) in storeMessage.MessageListInfoMyself " :key="index" :action="item.typeName"
+        :action-object="item.messageName" :user-name="item.userName" :user-link="`/Dynamics/${item.fromUser}`"
+        :message-link="`/Detail/${item.articleId}`">
         <template #messageDescription>
             {{ item.messageDescription }}
         </template>
@@ -51,7 +51,7 @@
 
     <div class="level py-5 ">
         <n-pagination class="level-item has-text-centered" v-model:page="pageinfo.pageIndex" :page-size="pageinfo.pageSize" :page-count="pageCount"
-            @update:page="loadDynamics" />
+            @update:page="loadMessage" />
     </div>
 </n-card >
 </template>
@@ -61,9 +61,13 @@ import { reactive, ref } from "vue";
 import MessageItem from "../components/messageItem.vue"
 import { useRoute } from 'vue-router'
 import{ MessageDots,Messages,FileLike,Menu2} from "@vicons/tabler"
-
-
+import { pageQueryMessageByMyself } from "../api/messageApi";
+import { loginState } from "../store/StoreLogin";
+import {MessageListStore} from "../store/storeMessage"
 const route = useRoute()
+const store=loginState()
+const storeMessage=MessageListStore();
+const type=ref("点赞")
 var pageCount = ref(1);
 var pageinfo = reactive({
     pageIndex: 1,
@@ -71,21 +75,33 @@ var pageinfo = reactive({
 
 })
 
-var MessageListInfo = reactive({
-    arr: [
-        {
 
-        }
-    ]
-})
 
 const props = defineProps({
-    type: { type: String, default: "评论", required: true },
+
 
 })
 
-//加载动态
-const loadDynamics = () => { }
+//加载消息
+const loadMessage = () => { 
+
+console.log("开始")
+
+    const info = reactive({
+      Id: store.userId,
+      pageIndex: pageinfo.pageIndex,
+      pageSize: pageinfo.pageSize,
+    });
+    pageQueryMessageByMyself(info,type.value).then((res) => {
+      if (res.data.success == true) {
+        storeMessage.MessageListInfoMyself = res.data.data.dataList;
+        pageCount.value = parseInt(res.data.data.recordCount / pageinfo.pageSize) + (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
+      }
+    });
+
+
+}
+loadMessage();
 </script>
 
 <style lang="scss" scoped>

@@ -409,7 +409,7 @@ const add = async () => {
           //截取33个字的内容
           console.log("替换了",cont)
           if (cont.length > 33) {
-            cont = cont.substring(0, 20) + "...";
+            cont = cont.substring(0, 33) + "...";
           }
           const info = reactive({
             UserId: userState.userId,

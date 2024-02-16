@@ -42,18 +42,7 @@ const route = useRoute()
 var articleDatas = reactive({
   arr: [
     {
-      'id':1,
-      'title': 'vuefuhfj',
-      'link': '/',
-      'description': 'njnkjnkjnkjnknkjkejbkbaekjbkaejbkfjbaddddddddd',
-      'authorName': 'mxc',
-      'categoryName': 'vue',
-      'releaseDate': '2023.11.11',
-      'imageUrl': ' https://helpx.adobe.com/content/dam/help/en/animate/using/elements/jcr%3acontent/main-pars/Looping_Graphic-Symbol.png.img.png',
-      'checkSum': 6,
-      'commentSum': 500,
-      'upvoteSum': 600,
-      'DetailLink': '3'
+     
     }
 
   ]

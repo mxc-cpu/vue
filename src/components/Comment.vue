@@ -54,12 +54,17 @@
             }}</RouterLink></strong
           >
           : <small> {{ item.createtime }}</small>
-       
-          <n-button text :color="color" @click="UpdateCommentUpvote(item.id),item.upvoteSum+=1 "  style="float: inline-end;"  >
+
+          <n-button
+            text
+            :color="color"
+            @click="UpdateCommentUpvote(item.id), (item.upvoteSum += 1)"
+            style="float: inline-end"
+          >
             <template #icon>
               <LikeOutlined />
             </template>
-            
+
             {{ item.upvoteSum }}
           </n-button>
           <br />
@@ -74,10 +79,9 @@
         >
         <n-button
           style="float: inline-end"
-          v-if="item.userId == store.userId||UserId==store.userId"
+          v-if="item.userId == store.userId || UserId == store.userId"
           class="has-text-info has-text-right"
           type="text"
-          
           @click="delComment(item.id)"
         >
           删除
@@ -129,7 +133,9 @@
                   <!--文章作者和评论的人可以删除-->
                   <n-button
                     style="float: inline-end"
-                    v-if="replyitem.userId == store.userId||UserId==store.userId"
+                    v-if="
+                      replyitem.userId == store.userId || UserId == store.userId
+                    "
                     class="has-text-info has-text-right"
                     type="text"
                     @click="delComment(replyitem.id)"
@@ -184,7 +190,6 @@
 </template>
 
 <script setup>
-
 import { LikeOutlined } from "@ant-design/icons-vue";
 import { ref, reactive, onMounted, onBeforeUpdate } from "vue";
 import {
@@ -196,11 +201,11 @@ import {
 import { AddDynamics } from "../api/DynamicsApi";
 import { useMessage } from "naive-ui";
 import { useRouter, useRoute, RouterLink } from "vue-router";
-
+import { AddMessage } from "../api/messageApi";
 import { loginState } from "../store/StoreLogin";
-let isUpvote= ref(false)
+let isUpvote = ref(false);
 
-const buttonState=ref(false)
+const buttonState = ref(false);
 const route = useRoute();
 const store = loginState();
 const message = useMessage();
@@ -220,7 +225,7 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-   UserId: {
+  UserId: {
     type: Number,
     default: -1,
   },
@@ -278,9 +283,7 @@ const UpdateCommentUpvote = (comid) => {
   getCommentList();
 };
 
-
 const pushcoment = async (rid, pid, content) => {
-  
   if (store.userId != 0) {
     const info = {
       UserId: store.userId,
@@ -297,11 +300,11 @@ const pushcoment = async (rid, pid, content) => {
         hidden();
 
         message.success("评论成功!");
-if(info.ParentId==0){
- //截取33个字的内容
-         
+        if (info.ParentId == 0) {
+          //截取33个字的内容
+
           if (info.Content.length > 33) {
-            info.Content= info.Content.substring(0, 20) + "...";
+            info.Content = info.Content.substring(0, 33) + "...";
           }
           const dyInfo = reactive({
             UserId: info.UserId,
@@ -310,11 +313,51 @@ if(info.ParentId==0){
             dynamicsDescription: info.Content,
           });
           //发表对文章的评论成功后就发布动态
-          AddDynamics(dyInfo).then( )
-          message.info("发布动态")
+          AddDynamics(dyInfo).then( message.info("发布动态"));
+       
+
+          //发消息给文章作者
+          const messageInfo = {
+            UserId: props.UserId,
+            fromUser: store.userId,
+            typeName: "评论",
+            articleId: info.ArticleId,
+            messageDescription: "",
+          };
+
+          let regex = /(<([^>]+)>)/gi;
+          let cont2 = info.Content;
+
+          cont2 = cont2.replace(regex, "");
+          //截取33个字的内容
+          if (cont2.length > 33) {
+            cont2 = cont2.substring(0, 33) + "...";
+          }
+          messageInfo.messageDescription = cont2;
+          AddMessage(messageInfo).then( message.info("发布消息"));
+        }else{
+          //发消息给回复的用户
+          const messageInfo = {
+            UserId: info.ReplyId,
+            fromUser: store.userId,
+            typeName: "回复",
+            articleId: info.ArticleId,
+            messageDescription: "",
+          };
+
+          let regex = /(<([^>]+)>)/gi;
+          let cont2 = info.Content;
+
+          cont2 = cont2.replace(regex, "");
+          //截取33个字的内容
+          if (cont2.length > 33) {
+            cont2 = cont2.substring(0, 33) + "...";
+          }
+          messageInfo.messageDescription = cont2;
+          AddMessage(messageInfo).then( message.info("发布消息"));
+
+
         }
-
-
       } else {
         message.info(res.data.data + ":" + res.data.message);
       }

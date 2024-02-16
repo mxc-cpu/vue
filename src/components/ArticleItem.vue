@@ -95,6 +95,7 @@ import { loginState } from '../store/StoreLogin';
 import { useMessage } from 'naive-ui';
 import { GetUserIDByArticleId } from '../api/articleApi';
 import { useRoute ,useRouter} from 'vue-router';
+import { AddMessage } from '../api/messageApi';
 const route=useRoute()
 const router =useRouter()
 const props = defineProps({
@@ -120,12 +121,27 @@ const cloorActive= '#ff9980'
 const colorHidden='#DCDCDC'
 let color= ref(colorHidden)
 let isUpvote= ref(true)
+let userId = ref(0);
 
 onMounted(()=>{
     yetUpvote()
+    getUserId()
     sum.value=props.upvoteSum
 })
+
+
+const getUserId = async () => {
+    if (Number(props.id)!=0){
+  await GetUserIDByArticleId(Number(props.id)).then((res) => {
+    if (res.data.success == true) {
+      userId.value = res.data.data;
+      console.log("作者ID2", props.id);
+      console.log("作者ID", userId.value);
+    }
+  });}
+};
 onBeforeUpdate(() => {
+    getUserId()
     yetUpvote()
    sum.value=props.upvoteSum
 
@@ -163,6 +179,28 @@ const upvote=()=>{
             sum.value=res.data.data
             isUpvote.value=true
             color.value=cloorActive
+
+
+            const messageInfo = {
+            UserId: userId.value,
+            fromUser: store.userId,
+            typeName: "点赞",
+            articleId: props.id,
+            messageDescription: "",
+          };
+
+          let regex = /(<([^>]+)>)/gi;
+          let cont = props.description;
+console.log("内容",cont)
+          cont = cont.replace(regex, "");
+          //截取33个字的内容
+          if (cont.length > 33) {
+            cont = cont.substring(0, 33) + "...";
+          }
+          console.log("内容2",cont)
+          messageInfo.messageDescription = cont;
+          console.log("内容3",messageInfo.messageDescription)
+          AddMessage(messageInfo);
         }
         else{
             color.value=cloorActive

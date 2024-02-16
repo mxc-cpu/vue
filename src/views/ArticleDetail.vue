@@ -31,18 +31,6 @@
     <n-divider> </n-divider>
     <div class="card-content">
       <div class="media">
-        <!-- <div class="colums is-desktop ">
-                    <div class="column ">
-                        <RouterLink to="/">上一篇{{ }}</RouterLink>
-                    </div>
-                    <div class="column ">
-                        <RouterLink to="/">下一篇 {{ }}</RouterLink>
-                    </div>
-
-
-
-                </div> -->
-
         <div class="columns is-desktop">
           <div style="display: inline-block; width: auto">
             <n-button
@@ -68,12 +56,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-                <a href="#">#css</a> <a href="#">#responsive</a>
-                <br>
-                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time> -->
     </div>
 
     <div class="hero is-info is-small">
@@ -84,14 +66,18 @@
 
     <!--评论-->
     <div class="card-content">
-      <Comment  :-artivle-id="data.id" :-user-id="userId"></Comment>
+      <Comment :-artivle-id="data.id" :-user-id="userId"></Comment>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { ArticleGetDetail, UpdateSeeCheck ,GetUserIDByArticleId} from "../api/articleApi";
+import {
+  ArticleGetDetail,
+  UpdateSeeCheck,
+  GetUserIDByArticleId,
+} from "../api/articleApi";
 import Comment from "../components/comment.vue";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { Star, FileLike } from "@vicons/tabler";
@@ -99,6 +85,7 @@ import { DoUpvote, YetUpvote } from "../api/upvoteApi";
 import { useMessage } from "naive-ui";
 import { loginState } from "../store/StoreLogin";
 import { DelCollect, AddCollect, YetCollect } from "../api/collectAip";
+import { AddMessage } from "../api/messageApi";
 
 const router = useRouter();
 const route = useRoute();
@@ -124,14 +111,13 @@ onMounted(() => {
   loadDetail();
 });
 
-let userId=ref(0)
+let userId = ref(0);
 
 const getUserId = async () => {
   await GetUserIDByArticleId(route.params.id).then((res) => {
     if (res.data.success == true) {
-     
       userId.value = res.data.data;
-      console.log("用户ID", userId.value)
+      console.log("作者ID", userId.value);
     }
   });
 };
@@ -177,8 +163,6 @@ const UpdateCheckSum = () => {
   });
 };
 
-
-
 const yetUpvote = () => {
   if (store.userId != 0) {
     const info = reactive({
@@ -193,6 +177,8 @@ const yetUpvote = () => {
           // upvoteSum.value += 1;
           upvoteState.value = "以点赞";
           color.value = cloorActive;
+
+         
         } else {
           color.value = colorHidden;
         }
@@ -201,7 +187,7 @@ const yetUpvote = () => {
   }
 };
 
-const upvote = () => {
+const upvote =  () => {
   if (store.userId != 0) {
     const info = reactive({
       ArticleId: data.value.id,
@@ -214,6 +200,27 @@ const upvote = () => {
           isUpvote.value = true;
           upvoteState.value = "以点赞";
           color.value = cloorActive;
+
+          const messageInfo = {
+            UserId: userId.value,
+            fromUser: store.userId,
+            typeName: "点赞",
+            articleId: data.value.id,
+            messageDescription: "",
+          };
+
+          let regex = /(<([^>]+)>)/gi;
+          let cont = data.value.description;
+console.log("内容",cont)
+          cont = cont.replace(regex, "");
+          //截取33个字的内容
+          if (cont.length > 33) {
+            cont = cont.substring(0, 33) + "...";
+          }
+          console.log("内容2",cont)
+          messageInfo.messageDescription = cont;
+          console.log("内容3",messageInfo.messageDescription)
+          AddMessage(messageInfo);
         } else {
           color.value = cloorActive;
           message.info(你已经对此文章点过赞了);
