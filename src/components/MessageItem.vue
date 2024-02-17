@@ -28,12 +28,27 @@
                 </p>
             </div>
         </div>
+        <n-button
+    
+    type="text"
+    :loading="isRunting"
+    :disabled="isRunting"
+    @click="remMessage()"
+  >
+  <span class="has-text-link"> 删除</span>
+    
+  </n-button>
     </article>
 </template>
 
 <script setup>
 import { RouterLink } from 'vue-router';
+import { DelMessage } from '../api/messageApi';
+import { useMessage } from 'naive-ui';
+import{defineEmits,ref} from 'vue';
+const message=useMessage();
 const props = defineProps({
+    Id:{type:Number,default:0,required:true},
     userName: { type: String, default: "mxc", required: true },
     action: { type: String, default: "评论", required: true },
     actionObject: { type: String, default: '文章' },
@@ -42,6 +57,35 @@ const props = defineProps({
     messageLink: { type: String, default: '/' },
     messageDescription: { type: String, default: 'cscscscscscscscscsc' },
 })
+let timerObject=null;
+let isRunting=ref(false)
+const remMessage = () => {
+isRunting.value=true;
+clearInterval(timerObject);
+if(isRunting.value){
+    timerObject=setInterval(()=>{
+       
+        DelMessage(props.Id).then((res) => {
+    if (res.data.success == true) {
+      
+        GetDelValue();
+        isRunting.value=false;
+      message.success("删除成功");
+    }else{
+        message.info("删除失败");
+    }
+  });
+     clearInterval(timerObject);
+      }
+       ,400);}
+ 
+};
+const emit = defineEmits(["GetDelValue"]);
+//子向父
+const delId = ref(props.Id);
+const GetDelValue = () => {
+  emit("GetDelValue", delId.value);
+};
 </script>
 
 <style lang="scss" scoped>

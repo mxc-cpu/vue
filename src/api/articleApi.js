@@ -26,6 +26,13 @@ export const  UploadArticleCover=async(image)=>{
     //   })
       return await axios.postForm('/Article/UploadArticleCover',image)
 }
+export const  UploadArticleContentImage=async(wangeditorUploadedImage)=>{
+    //Multipart 实体请求 使用 multipart/form-data 类型发起 POST 请求 详情看https://www.axios-http.cn/docs/multipart,以下两种都一样，后一种方便
+    // return await axios.post('/Article/UploadArticleCover',image, {headers: {
+    //     'Content-Type': 'multipart/form-data'}
+    //   })
+      return await axios.postForm('/Article/UploadArticleContentImage',wangeditorUploadedImage)
+}
 export const UpdateArticle=async(update)=>{
     //Multipart 实体请求 使用 multipart/form-data 类型发起 POST 请求 详情看https://www.axios-http.cn/docs/multipart,以下两种都一样，后一种方便
     // return await axios.post('/Article/UploadArticleCover',image, {headers: {
@@ -38,6 +45,9 @@ export const AddArticle=async(addInfo)=>{
 }
 export const newestArticle=async()=>{
     return await axios.get('/Article/NewestArticle')
+}
+export const HotAboutArticle=async()=>{
+    return await axios.get('/Article/HotAboutArticle')
 }
 export const DelArticle = async(id)=>{
     return await axios.get('/Article/DelArticle/'+id)

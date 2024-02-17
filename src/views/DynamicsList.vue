@@ -2,7 +2,6 @@
      <!--个人信息展示-->
      <n-card class="block">
             <div class="columns">
-       
               <div class="column is-one-fifth">
                 <div class="box py-2 px-2" style="width: 129px; height: 140px">
                   <img
@@ -181,6 +180,7 @@ const getInfo= async()=>{
 }
 onBeforeUpdate(()=>{
   getInfo();
+ 
 })
 
 getInfo();

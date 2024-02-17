@@ -33,13 +33,13 @@
           <Asidebox
             name="我的关注"
             type="focus"
-            :focusData="focusDataComp.arr"
+            :focusData="focusDataComp"
             :user-id="route.params.id"
           ></Asidebox>
           <Asidebox
             name="我的粉丝"
             type="fan"
-            :fanData="fanDataComp.arr"
+            :fanData="fanDataComp"
             :user-id="route.params.id"
           ></Asidebox>
         </n-grid-item>
@@ -56,7 +56,7 @@ import NavBar from "../components/MyNavBar.vue";
 import BlogdynamicsList from "../views/BlogdynamicsList.vue";
 import MessageList from "../views/MessageList.vue";
 import { loginState } from "../store/StoreLogin";
-import { onBeforeMount, onBeforeUpdate, onMounted, reactive, ref,h } from "vue";
+import { onBeforeMount, onBeforeUpdate,onUpdated, onMounted, reactive, ref,h } from "vue";
 import { FindFocusList, FindFansList } from "../api/DynamicsApi";
 import { GetUserAvatar, GetUserName } from "../api/getUserInfoApi";
 import { RouterView,RouterLink,useRoute } from "vue-router";
@@ -170,16 +170,17 @@ const menuOptions= [
 ]
 const store = loginState();
 
-const fanDataComp = reactive({ arr: [] });
+let fanDataComp = ref([]);
 
-const focusDataComp = reactive({ arr: [] });
+let focusDataComp = ref([]);
 const props = defineProps({ id: { type: Number, required: true },})
 const loadfoucus = () => {
-  let dataList = { arr: [] };
 
+  let dataList = { arr: [] };
+ 
   FindFocusList(route.params.id).then(async (res) => {
-    focusDataComp.arr.splice(0);
-    console.log("清空", focusDataComp.arr);
+    focusDataComp.value=[];
+    let comp=[];
     if (res.data.success == true) {
       dataList.arr = res.data.data;
 
@@ -200,22 +201,25 @@ const loadfoucus = () => {
           avatar: avatarOf.data.data,
           name: nameOf.data,
         };
-
-        focusDataComp.arr.push(data);
+    
+     comp.push(data);
+        
       }
-      console.log("Data", dataList.arr);
-      console.log("数组", focusDataComp.arr);
+      focusDataComp.value=comp;
     } else {
-      focusDataComp.arr = await res.data.data;
+      console.log("错误")
+      focusDataComp.value = await res.data.data;
     }
   });
 };
 const loadfan = () => {
+  let comp=[];
+  
   let dataList = { arr: [] };
-
+  
   FindFansList(route.params.id).then(async (res) => {
-    fanDataComp.arr.splice(0);
-    console.log("清空", fanDataComp.arr);
+    
+    fanDataComp.value=[];
     if (res.data.success == true) {
       dataList.arr = res.data.data;
 
@@ -237,13 +241,15 @@ const loadfan = () => {
           avatar: avatarOf.data.data,
           name: nameOf.data,
         };
-
-        fanDataComp.arr.push(data);
+     
+      comp.push(data);
+    
       }
-      console.log("Data2", dataList.arr);
-      console.log("数组2", fanDataComp.arr);
+ 
+      fanDataComp.value =comp;
+ 
     } else {
-      fanDataComp.arr = await res.data.data;
+      fanDataComp.value = await res.data.data;
     }
   });
 };
@@ -253,8 +259,12 @@ onMounted(() => {
   loadfoucus();
 });
 onBeforeUpdate(()=>{
+
   loadfan();
-  loadfoucus();
+
+loadfoucus();
+
+
 });
 </script>
 

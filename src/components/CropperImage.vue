@@ -3,7 +3,7 @@
     <n-grid :cols=1 :x-gap="10" item-responsive>
         <n-grid-item >
             <div style="width: 820px; height: 480px;">
-      <vueCropper style="width: 100%; height: 100%;" ref="cropper" :img="option.img" :outputSize="option.outputSize"
+      <vueCropper style="width: 100%; height: 100%;" ref="cropper" :img="img.img" :outputSize="option.outputSize"
         :outputType="option.outputType" :info="option.info" :canScale="option.canScale" :autoCrop="option.autoCrop"
         :autoCropWidth="option.autoCropWidth" :autoCropHeight="option.autoCropHeight" :fixedBox="option.fixedBox"
         :fixed="option.fixed" :fixedNumber="option.fixedNumber" :canMove="option.canMove" :canMoveBox="option.canMoveBox"
@@ -39,35 +39,42 @@
 
 <script setup lang="ts">
 
-import { ref, reactive } from 'vue';
+import { ref, reactive,defineProps } from 'vue';
 import { useMessage } from "naive-ui";
 import {UploadAvatar,UpdateAvatar} from "../api/getUserInfoApi"
 import { loginState } from '../store/StoreLogin';
+import { UploadArticleCover } from '../api/articleApi';
+import { ArticleCoverStore} from '../store/storeArticle';
 const message = useMessage();
 
 const store=loginState();
 
+const CoverStore=ArticleCoverStore()
+
 const cropper = ref()
-let option = reactive({
-  img: '', // 裁剪图片的地址 url 地址, base64, blob
-  outputSize: 1, // 裁剪生成图片的质量
-  outputType: 'png', // 裁剪生成图片的格式 png
-  info: true, // 裁剪框的大小信息
-  canScale: true, // 图片是否允许滚轮缩放
-  autoCrop: true, // 是否默认生成截图框
-  autoCropWidth: 128, // 默认生成截图框宽度
-  autoCropHeight: 128, // 默认生成截图框高度
-  fixedBox: false, // 固定截图框大小 不允许改变
-  fixed: true, // 是否开启截图框宽高固定比例，这个如果设置为true，截图框会是固定比例缩放的，如果设置为false，则截图框的狂宽高比例就不固定了
-  fixedNumber: [1, 1], // 截图框的宽高比例 [ 宽度 , 高度 ]
-  canMove: true, // 上传图片是否可以移动
-  canMoveBox: true, // 截图框能否拖动
-  original: false, // 上传图片按照原始比例渲染
-  centerBox: true, // 截图框是否被限制在图片里面
-  infoTrue: true, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
-  full: true, // 是否输出原图比例的截图
-  enlarge: '1', // 图片根据截图框输出比例倍数
-  mode: 'contain' // 图片默认渲染方式 contain , cover, 100px, 100% auto
+let img=reactive({
+  img:'' // 裁剪图片的地址 url 地址, base64, blob
+})
+let option = defineProps({
+  type:{type: Number, default: 1, required: true },  // 上传图片的类型1:头像2:封面
+  outputSize:{ type: Number, default: 1, required: true },  // 裁剪生成图片的质量
+  outputType: { type: String, default: 'png', required: true }, // 裁剪生成图片的格式 png
+  info:{ type: Boolean, default: true, required: true }, // 裁剪框的大小信息
+  canScale: { type: Boolean, default: true, required: true }, // 图片是否允许滚轮缩放
+  autoCrop: { type: Boolean, default: true, required: true }, // 是否默认生成截图框
+  autoCropWidth:{ type: Number, default: 128, required: true }, // 默认生成截图框宽度
+  autoCropHeight: { type: Number, default: 128, required: true }, // 默认生成截图框高度
+  fixedBox: { type: Boolean, default: false, required: true }, // 固定截图框大小 不允许改变
+  fixed: { type: Boolean, default: true, required: true }, // 是否开启截图框宽高固定比例，这个如果设置为true，截图框会是固定比例缩放的，如果设置为false，则截图框的狂宽高比例就不固定了
+  fixedNumber: { type: Array, default: [1, 1], required: true }, // 截图框的宽高比例 [ 宽度 , 高度 ]
+  canMove: { type: Boolean, default: true, required: true }, // 上传图片是否可以移动
+  canMoveBox:{ type: Boolean, default: true, required: true }, // 截图框能否拖动
+  original: { type: Boolean, default: false, required: true }, // 上传图片按照原始比例渲染
+  centerBox: { type: Boolean, default: true, required: true }, // 截图框是否被限制在图片里面
+  infoTrue: { type: Boolean, default: true, required: true }, // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+  full: { type: Boolean, default: true, required: true }, // 是否输出原图比例的截图
+  enlarge: { type: String, default: '1', required: true }, // 图片根据截图框输出比例倍数
+  mode: { type: String, default: 'contain', required: true }, // 图片默认渲染方式 contain , cover, 100px, 100% auto
 })
 
 // 向左旋转图片
@@ -112,13 +119,11 @@ function dataURLtoFile(dataurl, filename: string) {
 
 const imgUrl = ref('')
 
-
-
 const fileList = ref([])
 const handleFinish = ({ file}) => 
 {
       console.log("file",file.file)
-        option.img=URL.createObjectURL(file.file)
+        img.img=URL.createObjectURL(file.file)
      };
 
 const uploadadd = async (image: File) => {
@@ -128,6 +133,8 @@ const uploadadd = async (image: File) => {
     //将file存入formData key为image，名字必须和后端接口参数名统一
     formData.append("image", file);
     console.log("66", formData.get("image"));
+   if(option.type==1) {
+
     UploadAvatar(formData)
       .then((response) => {
         console.log("Upload successful:", response);
@@ -152,8 +159,29 @@ const uploadadd = async (image: File) => {
       })
       .catch((error) => {
         console.error("Upload failed:", error);
-      });
+     
+    });  
   }
+  else if (option.type==2)
+  {
+    UploadArticleCover(formData)
+      .then((response) => {
+        console.log("Upload successful:", response);
+        if (response.data.success == true) {
+          message.success("封面上传成功")
+         
+          CoverStore.ArticleCoverUrl = response.data.data;
+        } else {
+          message.error("请重新上传");
+        }
+      })
+      .catch((error) => {
+        console.error("Upload failed:", error);
+     
+    }); 
+  }
+}
+   
 };
 
 //图片上传检查

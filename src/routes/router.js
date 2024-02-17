@@ -110,6 +110,7 @@ let routes = [
       {
         name: "dynamicsUser",
         path: "/DynamicsUser/:id",
+      
         component: () => import("../views/DynamicsList.vue"),
       },
       {

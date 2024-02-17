@@ -37,9 +37,9 @@
     </div>
     <n-divider style="margin-top: 0px; "></n-divider>
     
-    <MessageItem v-for="(item, index) in storeMessage.MessageListInfoMyself " :key="index" :action="item.typeName"
+    <MessageItem v-for="(item, index) in storeMessage.MessageListInfoMyself " :key="index"  :-id="item.id"  :action="item.typeName"
         :action-object="item.messageName" :user-name="item.userName" :user-link="`/Dynamics/${item.fromUser}`"
-        :message-link="`/Detail/${item.articleId}`">
+        :message-link="`/Detail/${item.articleId}`"  @-get-del-value="DelMessageItem">
         <template #messageDescription>
             {{ item.messageDescription }}
         </template>
@@ -101,6 +101,25 @@ console.log("开始")
 
 
 }
+const DelMessageItem=(delId)=>{
+  console.log("删除")
+ 
+  
+  loadMessage()
+  for (let index = 0; index < storeMessage.MessageListInfoMyself.length; index++) {
+  
+    if(delId== storeMessage.MessageListInfoMyself[index].id){
+        storeMessage.MessageListInfoMyself.splice(index,1)
+    }
+   
+  }
+  
+
+}
+
+
+
+
 loadMessage();
 </script>
 

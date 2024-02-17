@@ -29,21 +29,46 @@ import {
   shallowRef,
 } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import {UploadArticleContentImage} from "../api/articleApi"
 
-const server_url = inject("server_url");
 // 编辑器实例，必须用 shallowRef，重要！
 const editorRef = shallowRef();
 const toolbarConfig = { excludeKeys: ["uploadVideo"] };
 const editorConfig = { placeholder: "请输入内容..." };
 editorConfig.MENU_CONF = {};
-editorConfig.MENU_CONF["uploadImage"] = {
-  base64LimitSize: 10 * 1024, // 10kb
-  server: server_url + "/upload/rich_editor_upload",
-};
+
+editorConfig.MENU_CONF['uploadImage'] = {
+    // 自定义上传
+   // TS 语法
+    async customUpload(file, insertFn) {                   // JS 语法
+        // file 即选中的文件
+        // 自己实现上传，并得到图片 url alt href
+        // 最后插入图片
+        let image = file;
+let formData = new FormData();
+  formData.append("wangeditorUploadedImage", image);
+    UploadArticleContentImage(formData).then(res=>{
+      if(res.data.success==true){
+    
+      insertFn(res.data.data,'','');
+    }else{
+      alter("上传图片失败")
+    }
+    })
+       
+       
+    }
+
+
+ 
+   
+  
+}
+
 editorConfig.MENU_CONF["insertImage"] = {
   parseImageSrc: (src) => {
     if (src.indexOf("http") !== 0) {
-      return `${server_url}${src}`;
+      return `${src}`;
     }
     return src;
   },

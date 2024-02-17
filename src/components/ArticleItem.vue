@@ -14,13 +14,15 @@
         </template>
         <n-list-item>
             <template #suffix>
-                <n-image style="display: block; width: 200px; "  width="200" :src=props.imageUrl
-                    fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"></n-image>
+<div  style=" display:inline-block; height: 180px; width: 320px;" >  <n-image class="image is-16by9"    width="100" :src=props.imageUrl
+                    fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"></n-image></div>
+
+              
             </template>
             <n-thing content-style=" padding: 0px 0px 200px 0px; height:70px;">
                 <n-ellipsis :line-clamp="3" :tooltip="false">
-                    <n-p v-html="props.description"  depth="3" style="font-size: 15px; word-break:break-all;" >
-                   
+                    <n-p v-html="Context" depth="3" style="font-size: 15px; word-break:break-all;" >
+                  
                         
                     </n-p>
                     <template #tooltip>
@@ -122,10 +124,11 @@ const colorHidden='#DCDCDC'
 let color= ref(colorHidden)
 let isUpvote= ref(true)
 let userId = ref(0);
-
+const Context=ref("");
 onMounted(()=>{
     yetUpvote()
     getUserId()
+    ContextRe()
     sum.value=props.upvoteSum
 })
 
@@ -143,6 +146,7 @@ const getUserId = async () => {
 onBeforeUpdate(() => {
     getUserId()
     yetUpvote()
+    ContextRe()
    sum.value=props.upvoteSum
 
 })
@@ -212,6 +216,23 @@ console.log("内容",cont)
 }else{
     message.info("还未登录");
 }
+}
+
+
+const ContextRe=()=>{
+    
+    let regex =/(<([^>]+)>)/gi
+   // /<img[^>]*>[^<]*<\/img>/gm;
+         
+
+    Context.value=props.description
+    Context.value =Context.value.replace(regex, "");
+          //截取33个字的内容
+          if ( Context.value.length > 100) {
+            Context.value =  props.description.substring(0, 100) + "...";
+          }
+          console.log("内容ppp",Context.value)
+
 }
 
 const getAuthorId=()=>{

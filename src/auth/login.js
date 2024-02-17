@@ -16,6 +16,7 @@ export const loginUser=async(login)=>{
 const key='tokenAnt'
 //从游览器本地存储器获取用户token信息
 export const getToken=()=>{
+    
     return localStorage.getItem(key)
 }
 //清除用户信息(用户下线)

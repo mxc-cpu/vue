@@ -41,7 +41,7 @@
             :newsData="newDataComp"
           ></Asidebox>
           <Asidebox
-            name="热门文章"
+            name="评论最多文章"
             type="news"
             :newsData="hotnewDataComp"
           ></Asidebox>
@@ -57,19 +57,12 @@
 import { computed, reactive, ref } from "vue";
 import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
-import { newestArticle ,FuzzySearch} from "../api/articleApi";
+import { newestArticle ,HotAboutArticle } from "../api/articleApi";
 
 const newsData = reactive({ arr: [] });
-const hotnewsData = reactive([
-  {
-    title:
-      "vue3+webApi开发实战入门evfehbofihesbahfboeiabfihbeiaefhbkajbfabhfhbahyhfbaieb",
-  },
-  { title: "vue3+webApi开发实战入门" },
-  { title: "vue3+webApi开发实战入门" },
-  { title: "vue3+webApi开发实战入门" },
-  { title: "vue3+webApi开发实战入门" },
-]);
+const hotnewsData = reactive({ arr:[
+ 
+]});
 
 const GetnewDataComp = async () => {
   await newestArticle()
@@ -86,13 +79,27 @@ const GetnewDataComp = async () => {
 };
 
 GetnewDataComp();
+const GethotDataComp = async () => {
+  await HotAboutArticle()
+    .then((res) => {
+      if (res.data.success == true) {
+        hotnewsData.arr = res.data.data;
+      } else {
+        console.log("获取失败");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
 
+GethotDataComp();
 const newDataComp = computed(() => {
   let itemnewsData = [];
 
   newsData.arr.forEach((item) => {
-    if (item.title.length > 33) {
-      item.title = item.title.substring(0, 20) + "...";
+    if (item.title.length > 15) {
+      item.title = item.title.substring(0, 15) + "...";
     }
     itemnewsData.push(item);
   });
@@ -100,9 +107,9 @@ const newDataComp = computed(() => {
 });
 const hotnewDataComp = computed(() => {
   let hotitemnewsData = [];
-  hotnewsData.forEach((item) => {
-    if (item.title.length > 33) {
-      item.title = item.title.substring(0, 20) + "...";
+  hotnewsData.arr.forEach((item) => {
+    if (item.title.length > 15) {
+      item.title = item.title.substring(0, 15) + "...";
     }
     hotitemnewsData.push(item);
   });

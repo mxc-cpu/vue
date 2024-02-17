@@ -3,8 +3,8 @@
 
   <div class="card">
     <div class="card-image">
-      <figure class="image is-3by1">
-        <img :src="data.imageUrl" alt="Placeholder image" />
+      <figure class="image is-16by9">
+        <n-image :src="data.imageUrl" fallback-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg" ></n-image>
       </figure>
     </div>
 

@@ -72,7 +72,7 @@
           <img :src="addArticle.imageUrl" />
         </n-form-item>
         <n-form-item>
-          <input type="file" :multiple="true" @change="uploadadd" />
+          <n-button @click="showUpdatcover=true ,state='add'" > 上传封面 </n-button>
         </n-form-item>
         <n-form-item label="内容">
           <rich-text-editor v-model="addArticle.description"></rich-text-editor>
@@ -110,7 +110,7 @@
           <img :src="updateArticle.imageUrl" />
         </n-form-item>
         <n-form-item>
-          <input type="file" :multiple="true" @change="upload" />
+          <n-button @click="showUpdatcover=true ,state='upd'" > 上传封面 </n-button>
         </n-form-item>
         <n-form-item label="内容">
           <rich-text-editor
@@ -130,6 +130,26 @@
       </n-form>
     </n-tab-pane>
   </n-tabs>
+  <n-modal
+      :mask-closable="false"
+      v-model:show="showUpdatcover"
+      @after-leave="clearArticle"
+      preset="dialog"
+      title="Dialog"
+      positive-text="确认"
+    negative-text="取消"
+    @positive-click="submitCallback(state)"
+    @negative-click="cancelCallback"
+      style="width: 900px; height: 900px;"
+    >
+      <template #header>
+        <div>上传封面</div>
+      </template>
+      <div >
+    <CropperImage :type="2" :autoCropWidth="1920" :autoCropHeight="1080" :fixedNumber="[16,9]"></CropperImage>
+  </div>
+  
+    </n-modal>
 </template>
 
 <script setup>
@@ -137,11 +157,12 @@ import { ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import {
   ArticlePageByuserAll,
-  UploadArticleCover,
   UpdateArticle,
   AddArticle,
   DelArticle,
 } from "../../api/articleApi";
+import { ArticleCoverStore} from "../../store/storeArticle"
+import CropperImage  from "../../components/CropperImage.vue"
 import { AddDynamics } from "../../api/DynamicsApi";
 import RichTextEditor from "../../components/RichTextEditor.vue";
 import { CategoryGetList, ByCategoryName } from "../../api/categoryApi";
@@ -151,11 +172,14 @@ import { AddTap, DelTap } from "../../api/tapApi.js";
 import { CompilationsListStore } from "../../store/StoreCompilations";
 const comStore = CompilationsListStore();
 const dialog = useDialog();
+const state=  ref("add")
 const userState = loginState();
+const CoverStore=ArticleCoverStore()
 let checkis = ref(false);
 let check = ref(false);
 let pageCount = ref(1);
 const message = useMessage();
+const showUpdatcover=ref(false);
 //分类选项
 let categortyOptions = ref([]);
 const blogListInfo = ref([]);
@@ -185,6 +209,21 @@ onMounted(() => {
     loadCategorys();
   }
 });
+
+//更新封面
+const submitCallback=(state)=>{
+  if(state=="add"){
+  addArticle.imageUrl=CoverStore.ArticleCoverUrl}
+  else if(state="upd"){
+  updateArticle.imageUrl=CoverStore.ArticleCoverUrl}
+}
+//重置
+const cancelCallback=()=>{
+  CoverStore.ArticleCoverUrl=''
+  CoverStore.ArticleCoverUrl=''
+}
+
+
 
 //是否发布（新增）
 const changePublished = (checked) => {
@@ -261,68 +300,6 @@ const updateArticle = reactive({
   Description: "",
   isPublished: false,
 });
-
-//图片上传
-const upload = async (image) => {
-  const file = image.target.files[0];
-  if (beforeUpload(file)) {
-    let formData = new FormData();
-    //将file存入formData key为image，名字必须和后端接口参数名统一
-    formData.append("image", file);
-    console.log("66", formData.get("image"));
-    UploadArticleCover(formData)
-      .then((response) => {
-        console.log("Upload successful:", response);
-        if (response.data.success == true) {
-          message.success("上传成功");
-          updateArticle.imageUrl = response.data.data;
-        } else {
-          message.error("请重新上传");
-        }
-      })
-      .catch((error) => {
-        console.error("Upload failed:", error);
-      });
-  }
-};
-
-const uploadadd = async (image) => {
-  const file = image.target.files[0];
-  if (beforeUpload(file)) {
-    let formData = new FormData();
-    //将file存入formData key为image，名字必须和后端接口参数名统一
-    formData.append("image", file);
-    console.log("66", formData.get("image"));
-    UploadArticleCover(formData)
-      .then((response) => {
-        console.log("Upload successful:", response);
-        if (response.data.success == true) {
-          message.success("上传成功");
-          addArticle.imageUrl = response.data.data;
-        } else {
-          message.error("请重新上传");
-        }
-      })
-      .catch((error) => {
-        console.error("Upload failed:", error);
-      });
-  }
-};
-
-//图片上传检查
-function beforeUpload(data) {
-  if (
-    data.type == "image/png" ||
-    data.type == "image/jpg" ||
-    data.type == "image/jpeg" ||
-    data.type == "image/bmp"
-  ) {
-    return true;
-  } else {
-    message.error("只能上传png格式的图片文件，请重新上传");
-    return false;
-  }
-}
 
 //读取博客列表
 const loadBlogs = async () => {

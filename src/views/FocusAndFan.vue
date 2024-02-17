@@ -113,6 +113,7 @@ const loadfocus = async (page = 0) => {
       }
     
     } else {
+      consol.log("dsd")
         fanDataComp.arr = push( res.data.data);
     }
   });

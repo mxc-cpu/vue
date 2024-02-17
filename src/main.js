@@ -21,7 +21,6 @@ const naive = create({
       NEllipsis,NPagination,NTabs,NTabPane,NAvatar,NUpload,NMessageProvider,NSelect,NRadio,NCheckboxGroup,NSwitch,NMenu,NDialogProvider,NTable ,NModal,NDataTable,NDatePicker,NRadioGroup,
       NCollapse ,NCollapseItem,NDrawer,NDrawerContent,NPopselect]
   })
-  const sensitiveWords = ['fuck', '敏感词2', '敏感词3'];
   const app = createApp(App);
   app.use(VueCropper);
   app.use(naive);

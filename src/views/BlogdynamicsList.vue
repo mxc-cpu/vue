@@ -49,9 +49,9 @@
 </template>
 
 <script setup>
-import { onBeforeUpdate, onMounted, reactive, ref,defineExpose } from "vue";
+import { onBeforeUpdate, onMounted, reactive, ref,defineExpose ,watch} from "vue";
 import BlogdynamicsItem from "../components/BlogdynamicsItem.vue";
-import { useRoute } from "vue-router";
+import { useRoute,useRouter,onBeforeRouteLeave } from "vue-router";
 import {
   pageQueryDynamicsByMyself,
   pageQueryDynamics,
@@ -59,6 +59,7 @@ import {
 import { DynamicsListStore } from "../store/storeDynamics";
 const dynamicsStore=DynamicsListStore();
 const route = useRoute();
+const router=useRouter();
 var pageCount = ref(1);
 var pageinfo = reactive({
   pageIndex: 1,
@@ -78,11 +79,12 @@ const loadDynamics = () => {
 
   if (props.type != "all") {
   
-    const info = reactive({
+    const info = ({
       Id: props.userId,
       pageIndex: pageinfo.pageIndex,
       pageSize: pageinfo.pageSize,
     });
+    console.log("dddc",info)
     pageQueryDynamicsByMyself(info).then((res) => {
       if (res.data.success == true) {
         dynamicsStore.BlogdynamicsListInfoMyself = res.data.data.dataList;
@@ -103,7 +105,44 @@ const loadDynamics = () => {
         pageCount.value = parseInt(res.data.data.recordCount / pageinfo.pageSize) + (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
       }
     });
+  }else{
+
   }
+};
+const loadDynamicsvalue = (id) => {
+ 
+
+ if (props.type != "all") {
+ 
+   const info = ({
+     Id: id,
+     pageIndex: pageinfo.pageIndex,
+     pageSize: pageinfo.pageSize,
+   });
+   console.log("dddc",info)
+   pageQueryDynamicsByMyself(info).then((res) => {
+     if (res.data.success == true) {
+       dynamicsStore.BlogdynamicsListInfoMyself = res.data.data.dataList;
+       pageCount.value = parseInt(res.data.data.recordCount / pageinfo.pageSize) + (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
+     }
+   });
+   
+ } else if (props.type == "all"){
+  
+   const info = reactive({
+     Id: id,
+     pageIndex: pageinfo.pageIndex,
+     pageSize: pageinfo.pageSize,
+   });
+   pageQueryDynamics(info).then((res) => {
+     if (res.data.success == true) {
+       dynamicsStore.BlogdynamicsListInfo = res.data.data.dataList;
+       pageCount.value = parseInt(res.data.data.recordCount / pageinfo.pageSize) + (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
+     }
+   });
+ }else{
+
+ }
 };
 //暴露给父组件，这样发布说说时才可以调用
 defineExpose({ loadDynamics })
@@ -132,8 +171,16 @@ const DelDynamicsItem=(delId)=>{
 }
 
 onMounted(()=>{
+  
     loadDynamics();
 })
+
+
+// watch(() =>router.currentRoute.value.params,(newValue,oldValue)=> {
+//    console.log('watch',newValue);   loadDynamicsvalue(newValue.id); 
+// },{ immediate: true })
+
+
 
 
 </script>

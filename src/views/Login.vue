@@ -14,7 +14,7 @@
              </n-form-item>
             </n-form>
           <template #footer>
-            <n-checkbox v-model:Checked="user.rember" label="记住我"/>
+            <n-checkbox v-model:checked="rember" label="记住我"/>
             <RouterLink  to="/Register" style="float:right;">还未注册?</RouterLink>
             <n-divider />
             <n-button class="container" color="#8a2be2" block="false" size="large" @click="login" style="width: 100px;" >登 录</n-button>
@@ -25,8 +25,8 @@
 
 <script setup>
 
-import{reactive}from 'vue'
-
+import{reactive ,onMounted,ref}from 'vue'
+import { Base64 } from 'js-base64';
 import { UserLoginStore } from '../store/StoreLogin';
 let rules={
     email:[
@@ -56,13 +56,67 @@ let rules={
         email:"",
         password:"",
         ip:sessionStorage.getItem('ip')
-    }
+    },
+    
  )
+
+ let rember =ref(false);
   const LoginStore=UserLoginStore() 
+  // const Base64 = Base64();
+  //引入64编码
+
  const login= async ()=>{
+
+if (rember.value){
+
+  let password = Base64.encode(user.password); // base64加密
+            setCookie(user.email, password, 7);
+}else
+{
+  console.log("xxx",rember.value)
+  setCookie("", "", -1); // 修改2值都为空，天数为负1天就好了
+}
+
+
+
   await  LoginStore.UserLigonAuthorization(user);
  // console.log(LoginStore.emial)
  }
+// 设置cookie
+ const setCookie=(userId, password, days) =>{
+
+  let date = new Date(); // 获取时间
+  date.setTime(date.getTime() + 24 * 60 * 60 * 1000 * days); // 保存的天数
+  // 字符串拼接cookie
+  window.document.cookie ="userId" + "=" + userId + ";path=/;expires=" + date.toGMTString();
+  window.document.cookie ="password" + "=" + password + ";path=/;expires=" + date.toGMTString();
+
+
+ 
+}
+
+// 读取cookie 将用户名和密码回显到input框中
+const getCookie=()=> {
+
+  if (document.cookie.length > 0) {
+    let arr = document.cookie.split("; "); //分割成一个个独立的“key=value”的形式
+    for (let i = 0; i < arr.length; i++) {
+      let arr2 = arr[i].split("="); // 再次切割，arr2[0]为key值，arr2[1]为对应的value
+      if (arr2[0] === "userId") {
+        user.email = arr2[1];
+      } else if (arr2[0] === "password") {
+         
+        user.password= Base64.decode(arr2[1]);// base64解密
+        rember.value = true;
+      }
+    }
+  }
+}
+onMounted(()=>{
+  getCookie()
+})
+
+ 
 </script>
 
 <style lang="scss" scoped>
