@@ -32,3 +32,6 @@ export const UploadAvatar=async(info)=>{
 export const UpdateAvatar=async(info)=>{
     return await axios.post('/Users/UpdateAvatar',info)
 }
+export const Logout=(id)=>{
+    return axios.get ('/Users/Logout/'+id)
+}

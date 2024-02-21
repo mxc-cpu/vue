@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { loginUser, logOut } from "../auth/login.js";
 import { GetUserName, GetUserAvatar } from "../api/getUserInfoApi.js";
 import { router } from "../routes/router.js";
+import { Logout } from '../api/getUserInfoApi.js';
 
 import * as jwtToken from "jose";
 
@@ -17,10 +18,13 @@ export const UserLoginStore = defineStore("StoreLogin", {
       localStorage.setItem("tokenAnt", this.token);
     },
     logOut() {
-      //移除token
-      logOut();
-      //用户信息改变，调用该方法进行重置
-      loginState().changeState();
+      Logout(loginState().userId).then(res=>{
+        if(res.data.success==true){
+       //移除token
+        logOut()
+        //用户信息改变，调用该方法进行重置
+        loginState().changeState()
+      }})
     },
 
     async UserLigonAuthorization(login) {

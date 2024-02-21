@@ -20,10 +20,12 @@ export const getToken=()=>{
     return localStorage.getItem(key)
 }
 //清除用户信息(用户下线)
-export const logOut=()=>{
+export const logOut= async()=>{
+   
     localStorage.removeItem(key)
     //跳转到首页
-    router.replace('/')
+    router.replace('/Login')
+    return true
     
 }
 //检查token有没有过期
