@@ -24,7 +24,8 @@ export const logOut= async()=>{
    
     localStorage.removeItem(key)
     //跳转到首页
-    router.replace('/Login')
+    router.replace('/')
+
     return true
     
 }

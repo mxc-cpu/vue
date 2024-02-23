@@ -4,6 +4,10 @@ export const ArticlePage=async(pageInfo)=>{
    
     return await axios.post('/Article/PageQuery',pageInfo)
 }
+export const BoutiquePageQuery=async(pageInfo)=>{
+   
+    return await axios.post('/Article/BoutiquePageQuery',pageInfo)
+}
 export const ArticleGetDetail=async(id)=>{
     return await axios.get('/Article/GetDetailbyId/'+id )
 }
@@ -45,6 +49,9 @@ export const AddArticle=async(addInfo)=>{
 }
 export const newestArticle=async()=>{
     return await axios.get('/Article/NewestArticle')
+}
+export const newestUserArticle=async(id)=>{
+    return await axios.get('/Article/NewestUserArticle/'+id)
 }
 export const HotAboutArticle=async()=>{
     return await axios.get('/Article/HotAboutArticle')

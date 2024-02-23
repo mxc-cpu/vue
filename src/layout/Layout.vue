@@ -7,7 +7,7 @@
       <n-grid cols="24" :x-gap="20" item-responsive>
         <n-grid-item span="0 400:12 600:15 800:18">
           <!--横幅轮播图-->
-          <n-carousel autoplay style="height: 240px">
+          <n-carousel v-if="route.name=='ArticleList'" autoplay style="height: 240px">
             <img
               class="carousel-img"
               src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg"
@@ -25,6 +25,13 @@
               src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg"
             />
           </n-carousel>
+          <section  class="hero is-info is-small">
+          <div v-if="route.name!='ArticleList'" class="hero-body container">
+        <p class="title is-2">
+          {{ Title }}
+        </p>
+      </div>
+    </section>
           <!--文章列表-->
 
           <router-view></router-view>
@@ -54,16 +61,19 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, onBeforeUpdate ,onMounted} from "vue";
+import { useRoute } from "vue-router";
 import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
 import { newestArticle ,HotAboutArticle } from "../api/articleApi";
-
+import {ByCategoryName} from "../api/categoryApi";
 const newsData = reactive({ arr: [] });
 const hotnewsData = reactive({ arr:[
  
 ]});
+const route=useRoute()
 
+let Title=ref("")
 const GetnewDataComp = async () => {
   await newestArticle()
     .then((res) => {
@@ -124,6 +134,26 @@ const searchCallBack = (Svalue) => {
 
   console.log("ffff" + Svalue);
 };
+onBeforeUpdate(async()=>{
+  if (route.name=="ArticleListByCategoryId"){
+    let name= (await ByCategoryName(route.params.categoryId)).data.data
+    Title.value="分类:"+name
+  }
+  else if(route.name=="Boutique"){
+    Title.value="精品区"
+  }
+
+})
+onMounted(async()=>{
+  if (route.name=="ArticleListByCategoryId"){
+    let name= (await ByCategoryName(route.params.categoryId)).data.data
+    Title.value="分类:"+name
+  }
+  else if(route.name=="Boutique"){
+    Title.value="精品区"
+  }
+
+})  
 </script>
 
 <style lang="scss">

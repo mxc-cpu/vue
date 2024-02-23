@@ -31,7 +31,7 @@
         <div class="navbar-start">
           <router-link class="navbar-item" to="/"> 主页 </router-link>
 
-          <a class="navbar-item"> 精品 </a>
+          <router-link class="navbar-item" to="/Boutique"> 精品 </router-link>
 
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link"> 分类 </a>

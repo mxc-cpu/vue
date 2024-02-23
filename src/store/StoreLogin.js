@@ -24,6 +24,8 @@ export const UserLoginStore = defineStore("StoreLogin", {
         logOut()
         //用户信息改变，调用该方法进行重置
         loginState().changeState()
+        location. reload()
+      
       }})
     },
 
@@ -32,7 +34,7 @@ export const UserLoginStore = defineStore("StoreLogin", {
       //记入登入状态检查是否关闭了浏览器
       sessionStorage.setItem("isClose", false);
       this.UsrerLogin(data.token);
-
+   
       router.replace("/");
     },
   },
@@ -47,7 +49,7 @@ export const loginState = defineStore("loginState", {
   }),
   actions: {
     async changeState() {
-        if (sessionStorage.getItem("isClose") == null) {
+        if (sessionStorage.getItem("isClose") == null&&this.InLogin) {
             this.name1 = "";
             this.userId = 0;
             this.InLogin = false;

@@ -14,6 +14,11 @@ let routes = [
         component: () => import("../views/ArticleList.vue"),
       },
       {
+        path: "/Boutique",
+        name: "Boutique",
+        component: () => import("../views/ArticleList.vue"),
+      },
+      {
         path: "/ArticleListByCategoryId/:categoryId",
         name: "ArticleListByCategoryId",
         component: () => import("../views/ArticleList.vue"),
@@ -81,7 +86,7 @@ let routes = [
     children: [
       {
         path: "/Detail/:id",
-
+        name: "Deail",
         component: () => import("../views/ArticleDetail.vue"),
       },
       {
@@ -110,7 +115,7 @@ let routes = [
       {
         name: "dynamicsUser",
         path: "/DynamicsUser/:id",
-      
+
         component: () => import("../views/DynamicsList.vue"),
       },
       {
@@ -135,6 +140,19 @@ let routes = [
       },
     ],
   },
+  {     path: '/404',       
+  component: () => import('../views/404.vue'),       
+  hidden: true     
+}, 
+{     path: '/403',       
+component: () => import('../views/403.vue'),       
+hidden: true     
+}, 
+//这个*匹配必须放在最后，将改路由配置放到所有路由的配置信息的最后，否则会其他路由path匹配造成影响。     
+{     path: '/:pathMatch(.*)',
+  redirect: '/404', 
+  hidden: true 
+}
 ];
 
 const router = createRouter({
@@ -155,10 +173,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.path === "/Login") return next();
-  if (to.path === "/ArticleList") return next();
+ else if (to.path === "/ArticleList") return next();
   //获取token
   //const tokenStr = window.sessionStorage.getItem('token')\
-  if (to.name == "dynamicsUser") {
+else  if (to.name === "dynamicsUser") {
     if (!getToken()) {
       alert("请先登入");
       next("/login");
@@ -166,7 +184,7 @@ router.beforeEach((to, from, next) => {
       next();
     }
   }
-  if (
+else  if (
     to.name === "articleEditor" ||
     to.name === "CompilationsEditor" ||
     to.name === "UserInfoEditor" ||
@@ -179,9 +197,10 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
+  } 
+  else {
+  return next();
   }
-  else{
-  next();}
 });
 
 export { router, routes };

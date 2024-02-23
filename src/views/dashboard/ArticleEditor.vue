@@ -16,6 +16,9 @@
             <template #header
               ><div class="title is-4">{{ item.title }}</div></template
             >
+            <template #avatar>
+              <n-tag  v-if="item.isBoutique" type="warning"> 精品 </n-tag>
+            </template>
             <template #default
               ><span>是否发布：{{ item.isPublished }}</span></template
             >
@@ -72,7 +75,9 @@
           <img :src="addArticle.imageUrl" />
         </n-form-item>
         <n-form-item>
-          <n-button @click="showUpdatcover=true ,state='add'" > 上传封面 </n-button>
+          <n-button @click="(showUpdatcover = true), (state = 'add')">
+            上传封面
+          </n-button>
         </n-form-item>
         <n-form-item label="内容">
           <rich-text-editor v-model="addArticle.description"></rich-text-editor>
@@ -110,7 +115,9 @@
           <img :src="updateArticle.imageUrl" />
         </n-form-item>
         <n-form-item>
-          <n-button @click="showUpdatcover=true ,state='upd'" > 上传封面 </n-button>
+          <n-button @click="(showUpdatcover = true), (state = 'upd')">
+            上传封面
+          </n-button>
         </n-form-item>
         <n-form-item label="内容">
           <rich-text-editor
@@ -131,25 +138,29 @@
     </n-tab-pane>
   </n-tabs>
   <n-modal
-      :mask-closable="false"
-      v-model:show="showUpdatcover"
-      @after-leave="clearArticle"
-      preset="dialog"
-      title="Dialog"
-      positive-text="确认"
+    :mask-closable="false"
+    v-model:show="showUpdatcover"
+    @after-leave="clearArticle"
+    preset="dialog"
+    title="Dialog"
+    positive-text="确认"
     negative-text="取消"
     @positive-click="submitCallback(state)"
     @negative-click="cancelCallback"
-      style="width: 900px; height: 900px;"
-    >
-      <template #header>
-        <div>上传封面</div>
-      </template>
-      <div >
-    <CropperImage :type="2" :autoCropWidth="1920" :autoCropHeight="1080" :fixedNumber="[16,9]"></CropperImage>
-  </div>
-  
-    </n-modal>
+    style="width: 900px; height: 900px"
+  >
+    <template #header>
+      <div>上传封面</div>
+    </template>
+    <div>
+      <CropperImage
+        :type="2"
+        :autoCropWidth="1920"
+        :autoCropHeight="1080"
+        :fixedNumber="[16, 9]"
+      ></CropperImage>
+    </div>
+  </n-modal>
 </template>
 
 <script setup>
@@ -161,8 +172,8 @@ import {
   AddArticle,
   DelArticle,
 } from "../../api/articleApi";
-import { ArticleCoverStore} from "../../store/storeArticle"
-import CropperImage  from "../../components/CropperImage.vue"
+import { ArticleCoverStore } from "../../store/storeArticle";
+import CropperImage from "../../components/CropperImage.vue";
 import { AddDynamics } from "../../api/DynamicsApi";
 import RichTextEditor from "../../components/RichTextEditor.vue";
 import { CategoryGetList, ByCategoryName } from "../../api/categoryApi";
@@ -172,14 +183,14 @@ import { AddTap, DelTap } from "../../api/tapApi.js";
 import { CompilationsListStore } from "../../store/StoreCompilations";
 const comStore = CompilationsListStore();
 const dialog = useDialog();
-const state=  ref("add")
+const state = ref("add");
 const userState = loginState();
-const CoverStore=ArticleCoverStore()
+const CoverStore = ArticleCoverStore();
 let checkis = ref(false);
 let check = ref(false);
 let pageCount = ref(1);
 const message = useMessage();
-const showUpdatcover=ref(false);
+const showUpdatcover = ref(false);
 //分类选项
 let categortyOptions = ref([]);
 const blogListInfo = ref([]);
@@ -211,19 +222,18 @@ onMounted(() => {
 });
 
 //更新封面
-const submitCallback=(state)=>{
-  if(state=="add"){
-  addArticle.imageUrl=CoverStore.ArticleCoverUrl}
-  else if(state="upd"){
-  updateArticle.imageUrl=CoverStore.ArticleCoverUrl}
-}
+const submitCallback = (state) => {
+  if (state == "add") {
+    addArticle.imageUrl = CoverStore.ArticleCoverUrl;
+  } else if ((state = "upd")) {
+    updateArticle.imageUrl = CoverStore.ArticleCoverUrl;
+  }
+};
 //重置
-const cancelCallback=()=>{
-  CoverStore.ArticleCoverUrl=''
-  CoverStore.ArticleCoverUrl=''
-}
-
-
+const cancelCallback = () => {
+  CoverStore.ArticleCoverUrl = "";
+  CoverStore.ArticleCoverUrl = "";
+};
 
 //是否发布（新增）
 const changePublished = (checked) => {
@@ -312,7 +322,7 @@ const loadBlogs = async () => {
     .then((res) => {
       if (res.data.success === true) {
         blogListInfo.value = res.data.data.dataList;
-        console.log("0", blogListInfo.value);
+        
         pageCount.value =
           parseInt(res.data.data.recordCount / pageinfo.pageSize) +
           (res.data.data.recordCount % pageinfo.pageSize > 0 ? 1 : 0);
@@ -377,14 +387,14 @@ const add = async () => {
           });
         } else {
           message.success(res.data.data + res.data.message);
- //文章发表成功后就发布动态
-    //正则替换掉HTML标签
-    let regex=/(<([^>]+)>)/ig
+          //文章发表成功后就发布动态
+          //正则替换掉HTML标签
+          let regex = /(<([^>]+)>)/gi;
           let cont = addArticle.description;
-          console.log("没替换",cont)
-         cont=cont.replace(regex,"");
+          console.log("没替换", cont);
+          cont = cont.replace(regex, "");
           //截取33个字的内容
-          console.log("替换了",cont)
+          console.log("替换了", cont);
           if (cont.length > 33) {
             cont = cont.substring(0, 33) + "...";
           }
@@ -394,11 +404,9 @@ const add = async () => {
             articleId: res.data.data,
             dynamicsDescription: cont,
           });
-        
-        
-         
-         AddDynamics(info)
-         
+
+          AddDynamics(info);
+
           loadBlogs();
         }
       } else {
@@ -409,10 +417,6 @@ const add = async () => {
       message.error(error);
     });
 };
-
-
-
-
 
 const toUpdate = async (blog) => {
   tabValue.value = "update";

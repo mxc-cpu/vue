@@ -56,10 +56,12 @@ import NavBar from "../components/MyNavBar.vue";
 import Asidebox from "../components/Asidebox.vue";
 import UserInfoPlan from "../components/userInfoPlan.vue";
 import { GetUserName, GetUserAvatar } from "../api/getUserInfoApi";
+import { newestUserArticle } from "../api/articleApi";
 import {PageQuery} from "../api/CompilationsApi";
 const router = useRouter();
 const route = useRoute();
 const userState = loginState();
+const newsData = reactive({ arr: [] });
 
 let Title=ref("我的文章")
 let avatar = ref("fff");
@@ -72,15 +74,59 @@ let name = ref();
 onMounted(() => {
 
   getUserId();
-  
+  if (route.name=="ArticleListByuser"){
+  Title.value='我的文章'}
+  else if (route.name=="CompilationsArticle"){
+    Title.value='我的合集'
+  }
 });
 
 onBeforeUpdate(() => {
 
   getUserId();
- 
-  Title.value='我的文章'
+ if (route.name=="ArticleListByuser"){
+  Title.value='我的文章'}
+  else if (route.name=="CompilationsArticle"){
+    Title.value='我的合集'
+  }
 });
+
+const GetnewDataComp = async () => {
+  let userid=0;
+  if (route.name=="Deail"){
+  userid= (await GetUserIDByArticleId(route.params.id)).data.data
+
+  }else{
+    userid=route.params.userId
+  }
+  await newestUserArticle(userid)
+    .then((res) => {
+      if (res.data.success == true) {
+        newsData.arr = res.data.data;
+      } else {
+        console.log("获取失败");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+GetnewDataComp();
+
+const newDataComp = computed(() => {
+  let itemnewsData = [];
+
+  newsData.arr.forEach((item) => {
+    if (item.title.length > 15) {
+      item.title = item.title.substring(0, 15) + "...";
+    }
+    itemnewsData.push(item);
+  });
+  return itemnewsData;
+});
+
+
 
 
 var pageinfo = reactive({
@@ -136,10 +182,6 @@ const compilationsDataComp = computed(() => {
   return itemnewsData;
 });
 
-
-
-
-
 //如果是从文章进的就根据文章获取一下作者id
 const getUserId = async () => {
   if (route.params.id != null) {
@@ -181,25 +223,25 @@ const getUserId = async () => {
   GetcompilationsDataComp();
 };
 
-/**
- * 读取文章详情
- */
-let data = ref({});
-const loadDetail = async () => {
-  await ArticleGetDetail(route.params.id)
-    .then((res) => {
-      console.log("xxx");
-      if (res.data.success == true) {
-        data.value = res.data.data;
-        console.log("detail", data.value);
-      } else {
-        console.log("没有找到");
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+// /**
+//  * 读取文章详情
+//  */
+// let data = ref({});
+// const loadDetail = async () => {
+//   await ArticleGetDetail(route.params.id)
+//     .then((res) => {
+//       console.log("xxx");
+//       if (res.data.success == true) {
+//         data.value = res.data.data;
+//         console.log("detail", data.value);
+//       } else {
+//         console.log("没有找到");
+//       }
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// };
 </script>
 
 <style lang="scss">

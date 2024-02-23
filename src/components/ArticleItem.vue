@@ -3,7 +3,9 @@
         <template #header>
 
             <n-h1 style="margin-bottom:auto;">
-
+                <n-tag  v-if="props.isBoutique"  style=" margin-right: 20px; transform: translateY(-5px);" type="warning">
+     精
+    </n-tag>
                 <router-link :to="props.detailLink">
 
                     <slot name="title">
@@ -103,6 +105,7 @@ const router =useRouter()
 const props = defineProps({
     
     id:{ type:String, default: 0,required: true },
+    isBoutique:{type:Boolean , default :false ,require:true},
     title: { type: String, required: true },
     author: { type: String, default: "", required: true },
     description: { type: String, default: "", required: true },

@@ -89,9 +89,7 @@ import { AddMessage } from "../api/messageApi";
 
 const router = useRouter();
 const route = useRoute();
-const blogInfo = ref(
-  "sssssssssssssssssddddddddddddddddddddddddddddddddddddddddd"
-);
+
 const message = useMessage();
 const store = loginState();
 const cloorActive = "hsl(344, 95%, 61%)";
@@ -137,7 +135,9 @@ const loadDetail = async () => {
         //更新浏览次数
         UpdateCheckSum();
       } else {
-        console.log("没有找到");
+        alert(res.data.message+':'+res.data.data)
+        router.push("/403")
+        
       }
     })
     .catch((error) => {
