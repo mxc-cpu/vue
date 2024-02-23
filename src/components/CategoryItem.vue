@@ -2,7 +2,7 @@
 <template>
     <div class="card" :title="props.categoryName">
         <div class="card-image">
-            <figure class="image is-4by3">
+            <figure class="image is-1by1">
                 <img :src="props.categorycoverUrl">
             </figure>
         </div>
