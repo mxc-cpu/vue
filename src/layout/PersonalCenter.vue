@@ -13,7 +13,7 @@
       </section>
       <n-grid cols="24" :x-gap="10" item-responsive>
         <n-grid-item span="0 400:8 600:5 800:5">
-          <Asidebox name="公告" type="announcement"></Asidebox>
+          <Asidebox name="公告" type="announcement" :announcement-data="Annstore.annInfo" ></Asidebox>
           <n-card >
           <n-menu  :options="menuOptions">   </n-menu>
           
@@ -46,7 +46,9 @@
       </n-grid>
     </div>
 
-    <footer></footer>
+    <n-layout-footer style="padding: 24px" bordered>
+        <MyFooter></MyFooter
+      ></n-layout-footer>
   </div>
 </template>
 
@@ -55,6 +57,7 @@ import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
 import BlogdynamicsList from "../views/BlogdynamicsList.vue";
 import MessageList from "../views/MessageList.vue";
+import MyFooter from "../components/MyFooter.vue"
 import { loginState } from "../store/StoreLogin";
 import { onBeforeMount, onBeforeUpdate,onUpdated, onMounted, reactive, ref,h } from "vue";
 import { FindFocusList, FindFansList } from "../api/DynamicsApi";
@@ -62,6 +65,9 @@ import { GetUserAvatar, GetUserName } from "../api/getUserInfoApi";
 import { RouterView,RouterLink,useRoute } from "vue-router";
 import{ NIcon } from 'naive-ui'
 import {Bell,Books,Activity,Star} from "@vicons/tabler";
+import {AnnStore} from "../store/StoreAnn"
+
+const Annstore= AnnStore()
 const route=useRoute()
 
 function renderIcon(icon) {

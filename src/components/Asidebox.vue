@@ -41,8 +41,7 @@
     </div>
     <div
       class="compilations"
-      v-if="props.type == 'compilations' && props.compilationsData.length > 0"
-    >
+      v-if="props.type == 'compilations' && props.compilationsData.length > 0">
       <ul>
         <li v-for="(item, index) in props.compilationsData" :key="index">
           <router-link
@@ -157,7 +156,8 @@ const fuzzySearch = async () => {
   if(searchValue.value.length!=0){
     options.value.splice(0)
   FuzzySearch(searchValue.value).then((res) => {
-    if (res.data.success == true) {
+    if (res.data.success == true)
+     {
        searchList.value=  res.data.data ;
        SearchStore.SearchResultData=searchList.value ;
         for (let index = 0; index < searchList.value.length; index++) {
@@ -171,6 +171,8 @@ const fuzzySearch = async () => {
           
         }
         console.log("完成",options.value)
+    }else{
+      SearchStore.SearchResultData=null
     }
     
   });

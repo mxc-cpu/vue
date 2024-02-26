@@ -17,29 +17,14 @@
           <router-link    to="/Editor/CompilationsEditor">合集列表
             
           </router-link>
-          <!-- <n-button  size="large" text @click="sw">
-            <n-icon size="20"  style="transform:translate(30px,5px);" ><ArrowBarDown  /></n-icon>
-           
-          </n-button>
-          <ul v-show="isShowList" v-for="(menu, index) in comStore.CompilationsData">
-    
-            <router-link :to="`/Editor/CompilationsEditor/${menu.id}`">{{ menu.compilationsName }}</router-link>
-          </ul> -->
+        
         </li>
       </ul>
       <ul class="menu-list py-1">
         <li><router-link to="/Editor/userInfoEditor">账户管理</router-link></li>
       </ul>
     </aside>
-    <!-- <div v-for="(menu, index) in menus" @click="toPage(menu)">
-                {{ menu.name }}
-            </div> -->
-    <!-- <n-menu
-      class="menus"
-      :options="menus"
-      :default-expanded-keys="defaultExpandedKeys"
-      @update:expanded-keys="handleUpdateExpandedKeys"
-    /> -->
+   
 
     <div style="padding: 20px; width: 100%">
       <n-dialog-provider>
@@ -49,6 +34,9 @@
       </n-dialog-provider>
     </div>
   </div>
+  <n-layout-footer style="padding: 24px" bordered>
+        <MyFooter></MyFooter
+      ></n-layout-footer>
 </template>
 
 <script setup>
@@ -56,6 +44,7 @@ import { ref, reactive, inject, h, onBeforeMount, onBeforeUpdate, onMounted, isS
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { QueryAllUserCompilationsById } from "../../api/CompilationsApi";
 import { loginState } from "../../store/StoreLogin";
+import MyFooter from "../../components/MyFooter.vue"
 import{CompilationsListStore} from "../../store/StoreCompilations";
 import{ChevronDown,ArrowDown,ArrowNarrowDown,ArrowBarDown} from "@vicons/tabler"
 const store = loginState();
@@ -66,10 +55,7 @@ const showCard = ref(false);
 
 let isShowList=ref(false)
 
-const sw=()=>{
-  console.log(isShowList)
-  isShowList.value=!isShowList.value
-}
+
 
 //获得合集
 const getCompilations =  () => {
@@ -105,7 +91,7 @@ onMounted(()=>{
   line-height: 50px;
   text-align: left;
   width: 180px;
-  height: 95vh;
+  height: 144vh;
   border-right: 1px solid #dadada;
 
   div {

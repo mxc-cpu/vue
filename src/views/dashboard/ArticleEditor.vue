@@ -2,10 +2,12 @@
   <n-tabs v-model:value="tabValue" justify-content="start" type="line">
     <n-tab-pane name="list" tab="文章列表">
       <n-list
+      
         class="box"
         v-for="(item, index) in blogListInfo"
         :key="index"
         style="margin-bottom: 15px"
+      
       >
         <template #footer>
           <span>发布时间：{{ item.releaseDate }}</span>
@@ -14,7 +16,7 @@
         <n-list-item>
           <n-thing content-style="margin-top: 20px;">
             <template #header
-              ><div class="title is-4">{{ item.title }}</div></template
+              ><div   @click="$router.push(`/Detail/${item.id}`)" class="title is-4"><a>{{ item.title }}</a></div></template
             >
             <template #avatar>
               <n-tag  v-if="item.isBoutique" type="warning"> 精品 </n-tag>

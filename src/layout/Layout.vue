@@ -8,25 +8,21 @@
         <n-grid-item span="0 400:12 600:15 800:18">
           <!--横幅轮播图-->
           <n-carousel v-if="route.name=='ArticleList'" autoplay style="height: 240px">
+           <n-carousel-item v-for="item in headLineRef">
+            <a :href="item.descriptionURL">
             <img
               class="carousel-img"
-              src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg"
+              :src="item.coverURL"
             />
-            <img
-              class="carousel-img"
-              src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel2.jpeg"
-            />
-            <img
-              class="carousel-img"
-              src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel3.jpeg"
-            />
-            <img
-              class="carousel-img"
-              src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg"
-            />
+          </a>
+            <span class="title is-3  has-text-link-light has-text-left" style=" -webkit-text-stroke:1px rgb(1, 28, 31); float: left; transform: translate(40px,-80px);" >
+            {{ item.title }}
+            
+            </span>
+          </n-carousel-item>
           </n-carousel>
           <section  class="hero is-info is-small">
-          <div v-if="route.name!='ArticleList'" class="hero-body container">
+          <div v-if="route.name!='ArticleList'&&route.name!='SearchResult'" class="hero-body container">
         <p class="title is-2">
           {{ Title }}
         </p>
@@ -41,7 +37,7 @@
         <n-grid-item span="0 400:12 600:9 800:6">
           <Asidebox type="search" @GetSearchValue="searchCallBack"></Asidebox>
 
-          <Asidebox name="公告" type="announcement"></Asidebox>
+          <Asidebox name="公告" type="announcement" :announcement-data="store.annInfo"></Asidebox>
           <Asidebox
             name="最新文章"
             type="news"
@@ -56,7 +52,9 @@
       </n-grid>
     </div>
 
-    <footer></footer>
+    <n-layout-footer style="padding: 24px" bordered>
+        <MyFooter></MyFooter
+      ></n-layout-footer>
   </div>
 </template>
 
@@ -65,12 +63,19 @@ import { computed, reactive, ref, onBeforeUpdate ,onMounted} from "vue";
 import { useRoute } from "vue-router";
 import Asidebox from "../components/asidebox.vue";
 import NavBar from "../components/MyNavBar.vue";
+import {GetHeadlineList}from "../api/headlineApi"
 import { newestArticle ,HotAboutArticle } from "../api/articleApi";
 import {ByCategoryName} from "../api/categoryApi";
+import {AnnStore} from "../store/StoreAnn"
+import MyFooter from "../components/MyFooter.vue";
+const store= AnnStore()
 const newsData = reactive({ arr: [] });
 const hotnewsData = reactive({ arr:[
  
 ]});
+
+
+
 const route=useRoute()
 
 let Title=ref("")
@@ -134,6 +139,17 @@ const searchCallBack = (Svalue) => {
 
   console.log("ffff" + Svalue);
 };
+
+const headLineRef=ref({})
+const GetHeadline=()=>{
+  GetHeadlineList().then (res=>{
+    if(res.data.success==true){
+      headLineRef.value=res.data.data;
+    }
+  })
+
+}
+
 onBeforeUpdate(async()=>{
   if (route.name=="ArticleListByCategoryId"){
     let name= (await ByCategoryName(route.params.categoryId)).data.data
@@ -142,6 +158,7 @@ onBeforeUpdate(async()=>{
   else if(route.name=="Boutique"){
     Title.value="精品区"
   }
+ 
 
 })
 onMounted(async()=>{
@@ -152,8 +169,13 @@ onMounted(async()=>{
   else if(route.name=="Boutique"){
     Title.value="精品区"
   }
-
+  GetHeadline()
+  getInfo()
 })  
+
+
+
+
 </script>
 
 <style lang="scss">

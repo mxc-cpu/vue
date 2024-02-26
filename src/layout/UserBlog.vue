@@ -23,7 +23,7 @@
           :avatar="avatar"
           :user-id="userId"
         ></UserInfoPlan>
-        <Asidebox name="公告" type="announcement"></Asidebox>
+        <Asidebox name="公告" type="announcement" :announcement-data="Annstore.annInfo"> </Asidebox>
         <Asidebox
           name="我的最新文章"
           type="news"
@@ -43,13 +43,15 @@
       </n-grid-item>
     </n-grid>
   </div>
-  <footer></footer>
+  <n-layout-footer style="padding: 24px" bordered>
+        <MyFooter></MyFooter
+      ></n-layout-footer>
 </template>
 
 <script setup>
 import { ref, reactive, inject, onMounted, onBeforeUpdate, computed } from "vue";
 import { ArticleGetDetail, GetUserIDByArticleId } from "../api/articleApi";
-
+import MyFooter from "../components/MyFooter.vue"; 
 import { useRouter, useRoute, RouterView } from "vue-router";
 import { loginState } from "../store/StoreLogin";
 import NavBar from "../components/MyNavBar.vue";
@@ -58,12 +60,16 @@ import UserInfoPlan from "../components/userInfoPlan.vue";
 import { GetUserName, GetUserAvatar } from "../api/getUserInfoApi";
 import { newestUserArticle } from "../api/articleApi";
 import {PageQuery} from "../api/CompilationsApi";
+import {AnnStore} from "../store/StoreAnn"
+
+const Annstore= AnnStore()
+
 const router = useRouter();
 const route = useRoute();
 const userState = loginState();
 const newsData = reactive({ arr: [] });
 
-let Title=ref("我的文章")
+let Title=ref("欢迎来到我的博客")
 let avatar = ref("fff");
 let userId = ref(0);
 let name = ref();
@@ -75,7 +81,7 @@ onMounted(() => {
 
   getUserId();
   if (route.name=="ArticleListByuser"){
-  Title.value='我的文章'}
+  Title.value='欢迎来到我的博客'}
   else if (route.name=="CompilationsArticle"){
     Title.value='我的合集'
   }
@@ -191,11 +197,7 @@ const getUserId = async () => {
           userId.value = res.data.data;
 
 
-          //      const value = await GetUserName(userId.value)
-          //      const value2=await GetUserAvatar(userId.value)
-          //    avatar.value= await value2.data.data
-          //     console.log("头像",avatar.value)
-          //      name.value= await value.data
+          
           const [avatarOf, nameOf] = await Promise.all([
             GetUserAvatar(userId.value),
             GetUserName(userId.value),
@@ -223,25 +225,7 @@ const getUserId = async () => {
   GetcompilationsDataComp();
 };
 
-// /**
-//  * 读取文章详情
-//  */
-// let data = ref({});
-// const loadDetail = async () => {
-//   await ArticleGetDetail(route.params.id)
-//     .then((res) => {
-//       console.log("xxx");
-//       if (res.data.success == true) {
-//         data.value = res.data.data;
-//         console.log("detail", data.value);
-//       } else {
-//         console.log("没有找到");
-//       }
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// };
+
 </script>
 
 <style lang="scss">

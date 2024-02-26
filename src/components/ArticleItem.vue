@@ -141,8 +141,6 @@ const getUserId = async () => {
   await GetUserIDByArticleId(Number(props.id)).then((res) => {
     if (res.data.success == true) {
       userId.value = res.data.data;
-      console.log("作者ID2", props.id);
-      console.log("作者ID", userId.value);
     }
   });}
 };

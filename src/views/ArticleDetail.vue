@@ -12,7 +12,7 @@
     <section class="hero is-link">
       <div class="hero-body container">
         <p class="title is-2">
-          {{ data.title }}
+        《 {{ data.title }} 》
         </p>
       </div>
     </section>
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, onBeforeUpdate } from "vue";
 import {
   ArticleGetDetail,
   UpdateSeeCheck,
@@ -109,6 +109,11 @@ onMounted(() => {
   loadDetail();
 });
 
+// watch(()=> {
+//     route(to, from)=> route.go(0);
+       
+    
+// })
 let userId = ref(0);
 
 const getUserId = async () => {

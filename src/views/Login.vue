@@ -1,6 +1,6 @@
 <template>
         <n-card class="box login-panel " >
-            <h1 class=" title container login-tiele-center">登录</h1>
+            <h1 class=" title container login-tiele-center">博客园登录</h1>
             <n-divider />
             <n-form :rules="rules" :model="user">
                <n-form-item path="email" label="邮箱">

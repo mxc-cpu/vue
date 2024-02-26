@@ -87,6 +87,9 @@ let routes = [
       {
         path: "/Detail/:id",
         name: "Deail",
+        query: {
+          ic: Date.now() //动态id 进行路由动态更新 从而促使每次跳转保持路由的刷新
+        },
         component: () => import("../views/ArticleDetail.vue"),
       },
       {

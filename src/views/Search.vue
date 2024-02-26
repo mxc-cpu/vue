@@ -1,5 +1,5 @@
 <template>
-<section class="hero is-primary">
+<section class="hero is-primary" v-if="show" >
       <div class="hero-body container">
         <p class="title is-2">
           搜索结果
@@ -7,8 +7,8 @@
       </div>
     </section>
   <n-message-provider>
-    <n-space vertical size="large">
-      <ArticleItem
+    <n-space vertical size="large" v-if="show">
+      <ArticleItem v-if="!isNotthing"
         v-for="(item, index) in SearchDatas.arr"
         :key="index"
         :imageUrl="item.imageUrl"
@@ -26,6 +26,7 @@
         <template #checkSum>{{ item.checkSum }}</template>
         <template #commentSum>{{ item.commentSum }}</template>
       </ArticleItem>
+      <p v-else> 搜索结果为空</p>
       <div class="level py-6">
         <n-pagination
           class="level-item has-text-centered"
@@ -61,42 +62,50 @@ const route = useRoute();
 var SearchDatas = reactive({
   arr: [
     {
-      id: 1,
-      title: "vuefuhfj",
-      link: "/",
-      description: "njnkjnkjnkjnknkjkejbkbaekjbkaejbkfjbaddddddddd",
-      authorName: "mxc",
-      categoryName: "vue",
-      releaseDate: "2023.11.11",
-      imageUrl:
-        " https://helpx.adobe.com/content/dam/help/en/animate/using/elements/jcr%3acontent/main-pars/Looping_Graphic-Symbol.png.img.png",
-      checkSum: 6,
-      commentSum: 500,
-      upvoteSum: 600,
-      DetailLink: "3",
+      // id: 1,
+      // title: "vuefuhfj",
+      // link: "/",
+      // description: "njnkjnkjnkjnknkjkejbkbaekjbkaejbkfjbaddddddddd",
+      // authorName: "mxc",
+      // categoryName: "vue",
+      // releaseDate: "2023.11.11",
+      // imageUrl:
+      //   " https://helpx.adobe.com/content/dam/help/en/animate/using/elements/jcr%3acontent/main-pars/Looping_Graphic-Symbol.png.img.png",
+      // checkSum: 6,
+      // commentSum: 500,
+      // upvoteSum: 600,
+      // DetailLink: "3",
     },
   ],
 });
-
+var isNotthing=false
 var pageinfo = reactive({
   pageIndex: 1,
   pageSize: 9,
 });
 var pageCount = ref(1);
-
+var show= ref(false)
 const loadSearch = async (page = 0) => {
   if (page != 0) {
     pageinfo.pageIndex = page;
   }
 
+
   //对搜索结果分页,slice(star,end) 返回的结果不带第end个，从0开始
   let star = (pageinfo.pageIndex - 1) * pageinfo.pageSize;
   let end = star + pageinfo.pageSize;
 
+  if (SearchStore.SearchResultData==null) {
+    isNotthing=true ;show.value=true
+  }else{
+    
   SearchDatas.arr = SearchStore.SearchResultData.slice(star, end);
   pageCount.value =
     parseInt(SearchStore.SearchResultData.length / pageinfo.pageSize) +
     (SearchStore.SearchResultData.length % pageinfo.pageSize > 0 ? 1 : 0);
+    show.value=true
+  
+  }
 };
 
 

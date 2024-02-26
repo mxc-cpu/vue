@@ -27,7 +27,7 @@
             </n-button>
         </div>
         <div class="column ">
-            <n-button text style="font-size: 15px" @click="type='系统',loadMessage()">
+            <n-button text style="font-size: 15px" @click="type='通知',loadMessage()">
             <n-icon size="40" color="hsl(204, 71%, 39%)">
               <Menu2/>
          </n-icon>

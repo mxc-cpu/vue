@@ -7,24 +7,15 @@
     <div class="container">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <img
-            src="https://bulma.io/images/bulma-logo.png"
+          <img 
+            src="https://localhost:7112//blogIcon.png"
             width="112"
             height="28"
           />
+          <!-- "https://bulma.io/images/bulma-logo.png" -->
         </a>
 
-        <a
-          role="button"
-          class="navbar-burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
+     
       </div>
 
       <div id="navbarBasicExample" class="navbar-menu">

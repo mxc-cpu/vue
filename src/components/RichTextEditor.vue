@@ -39,8 +39,8 @@ editorConfig.MENU_CONF = {};
 
 editorConfig.MENU_CONF['uploadImage'] = {
     // 自定义上传
-   // TS 语法
-    async customUpload(file, insertFn) {                   // JS 语法
+
+    async customUpload(file, insertFn) {               
         // file 即选中的文件
         // 自己实现上传，并得到图片 url alt href
         // 最后插入图片

@@ -46,7 +46,7 @@
               class="title is-5 has-text-link has-text-centered"
               style="text-align: right"
             >
-              我的文章
+              我的博文
             </p>
           </RouterLink>
           <RouterLink class="column" :to="`/DynamicsUser/${props.userId}`">
@@ -54,7 +54,7 @@
               class="title is-5 has-text-link has-text-centered"
               style="text-align: right"
             >
-              个人中心
+              博客园子
             </p>
           </RouterLink>
         </div>
