@@ -35,3 +35,6 @@ export const UpdateAvatar=async(info)=>{
 export const Logout=(id)=>{
     return axios.get ('/Users/Logout/'+id)
 }
+export const QueryFansCount =async(id)=>{
+    return await axios.get('/Users/QueryFansCount/'+id)
+}

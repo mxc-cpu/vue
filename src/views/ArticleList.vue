@@ -4,7 +4,7 @@
     <TapArticleList :user-id="userId"></TapArticleList>
   <n-space vertical size="large">
    
-    <ArticleItem v-for="(item, index) in articleDatas.arr " :key="index" :imageUrl="item.imageUrl" :description="item.description" :id="item.id" :ref="`sm${index}`" 
+    <ArticleItem v-if="articleDatas.arr.length!==0" v-for="(item, index) in articleDatas.arr " :key="index" :imageUrl="item.imageUrl" :description="item.description" :id="item.id" :ref="`sm${index}`" 
       :detailLink="`/Detail/${item.id}`" :upvoteSum="item.upvoteSum" :isBoutique="item.isBoutique">
 
       <template #title> {{ item.title }}</template>
@@ -17,6 +17,7 @@
    
      
     </ArticleItem>
+    <p v-else> 期待您的博文</p>
     <div class= "level py-6 ">
         <n-pagination class="level-item has-text-centered" v-model:page="pageinfo.pageIndex" :page-size="pageinfo.pageSize" :page-count="pageCount"
             @update:page="loadBlogs" />

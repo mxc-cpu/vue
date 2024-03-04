@@ -166,7 +166,7 @@ const fuzzySearch = async () => {
           value: searchList.value[index].id,
          
          }
-         console.log("dsdd",en)
+        
          options.value.push(en)
           
         }
@@ -177,7 +177,7 @@ const fuzzySearch = async () => {
     
   });
 }else{
-      console.log("cx",options.value)
+      
       options.value.splice(0)
     }
 };
@@ -192,7 +192,8 @@ const GetSearchValue = () => {
   emit("GetSearchValue", searchValue.value);
 };
 const gotoSearch=()=>{
-  router.push('/ArticleList/SearchResult/'+`${searchValue.value}`)
+  if(searchValue.value!==""){
+  router.push('/ArticleList/SearchResult/'+`${searchValue.value}`)}
 }
 </script>
 

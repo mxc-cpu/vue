@@ -22,6 +22,9 @@
           :userName="name"
           :avatar="avatar"
           :user-id="userId"
+          :-article-sum="ArticleCount"
+          :upvote-sum="ArticleUpvoteCount"
+          :fans="FansSum"
         ></UserInfoPlan>
         <Asidebox name="公告" type="announcement" :announcement-data="Annstore.annInfo"> </Asidebox>
         <Asidebox
@@ -49,16 +52,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, onMounted, onBeforeUpdate, computed } from "vue";
-import { ArticleGetDetail, GetUserIDByArticleId } from "../api/articleApi";
+import { ref, reactive,  onMounted, onBeforeUpdate, computed } from "vue";
+import { GetUserIDByArticleId,StatisticsUserArticle,newestUserArticle,StatisticsUserArticleUpvoteSum } from "../api/articleApi";
 import MyFooter from "../components/MyFooter.vue"; 
 import { useRouter, useRoute, RouterView } from "vue-router";
 import { loginState } from "../store/StoreLogin";
 import NavBar from "../components/MyNavBar.vue";
 import Asidebox from "../components/Asidebox.vue";
 import UserInfoPlan from "../components/userInfoPlan.vue";
-import { GetUserName, GetUserAvatar } from "../api/getUserInfoApi";
-import { newestUserArticle } from "../api/articleApi";
+import { GetUserName, GetUserAvatar,QueryFansCount } from "../api/getUserInfoApi";
+
 import {PageQuery} from "../api/CompilationsApi";
 import {AnnStore} from "../store/StoreAnn"
 
@@ -66,7 +69,6 @@ const Annstore= AnnStore()
 
 const router = useRouter();
 const route = useRoute();
-const userState = loginState();
 const newsData = reactive({ arr: [] });
 
 let Title=ref("欢迎来到我的博客")
@@ -85,6 +87,8 @@ onMounted(() => {
   else if (route.name=="CompilationsArticle"){
     Title.value='我的合集'
   }
+  //获取用户文章数统计
+  
 });
 
 onBeforeUpdate(() => {
@@ -102,7 +106,12 @@ const GetnewDataComp = async () => {
   if (route.name=="Deail"){
   userid= (await GetUserIDByArticleId(route.params.id)).data.data
 
-  }else{
+  }
+  else   if (route.name=='CompilationsArticle'){
+    userid=route.params.owningUserId
+  }
+  
+  else{
     userid=route.params.userId
   }
   await newestUserArticle(userid)
@@ -118,7 +127,7 @@ const GetnewDataComp = async () => {
     });
 };
 
-GetnewDataComp();
+
 
 const newDataComp = computed(() => {
   let itemnewsData = [];
@@ -131,6 +140,24 @@ const newDataComp = computed(() => {
   });
   return itemnewsData;
 });
+
+
+const FansSum=ref(0);
+const ArticleCount=ref(0);
+const ArticleUpvoteCount=ref(0);
+const count = async()=>{
+
+  const [ArticleCountRef, ArticleUpvoteCountRef,QueryFansCountRef] = await Promise.all([
+  StatisticsUserArticle(userId.value),
+  StatisticsUserArticleUpvoteSum(userId.value),
+  QueryFansCount(userId.value)
+    ]);
+    ArticleCount.value=ArticleCountRef.data.data
+    ArticleUpvoteCount.value=ArticleUpvoteCountRef.data.data
+    FansSum.value=QueryFansCountRef.data.data
+  
+}
+
 
 
 
@@ -147,10 +174,11 @@ const GetcompilationsDataComp = async (page = 0) => {
   if (page != 0) {
     pageinfo.pageIndex = page
   }
-  if (route.params.owningUserId!=null){
+  if (route.name=="CompilationsArticle"){
     id=route.params.owningUserId
+    console.log("ee",id)
   }
-  if (route.params.userId==null){
+  else if (route.params.userId==null){
     console.log("kong",userId.value)
     id=userId.value
   }
@@ -167,7 +195,7 @@ const GetcompilationsDataComp = async (page = 0) => {
   await PageQuery(info).then((res) => {
       if (res.data.success == true) {
         compilationsData.arr =  res.data.data.dataList;
-        console.log("ddxddx",res.data.dataList)
+        console.log("ddxddx",res.data.data.dataList)
       } else {
         console.log("获取失败");
       }
@@ -211,7 +239,8 @@ const getUserId = async () => {
       .catch((error) => {
         console.log(error);
       });
-  } else if (route.params.userId != null) {
+  } 
+  else if (route.params.userId != null) {
     userId.value = route.params.userId;
     const [avatarOf, nameOf] = await Promise.all([
       GetUserAvatar(userId.value),
@@ -222,7 +251,20 @@ const getUserId = async () => {
 
     name.value = nameOf.data;
   }
+  else if (route.name == "CompilationsArticle"){
+    userId.value = route.params.owningUserId;
+    const [avatarOf, nameOf] = await Promise.all([
+      GetUserAvatar(userId.value),
+      GetUserName(userId.value),
+    ]);
+
+    avatar.value = avatarOf.data.data;
+
+    name.value = nameOf.data;
+  }
+  GetnewDataComp();
   GetcompilationsDataComp();
+  count();
 };
 
 

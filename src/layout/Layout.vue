@@ -6,7 +6,7 @@
     <div class="container">
       <n-grid cols="24" :x-gap="20" item-responsive>
         <n-grid-item span="0 400:12 600:15 800:18">
-          <!--横幅轮播图-->
+          <!--横幅轮播图头条-->
           <n-carousel v-if="route.name=='ArticleList'" autoplay style="height: 240px">
            <n-carousel-item v-for="item in headLineRef">
             <a :href="item.descriptionURL">

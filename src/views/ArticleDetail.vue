@@ -216,15 +216,15 @@ const upvote =  () => {
 
           let regex = /(<([^>]+)>)/gi;
           let cont = data.value.description;
-console.log("内容",cont)
+
           cont = cont.replace(regex, "");
           //截取33个字的内容
           if (cont.length > 33) {
             cont = cont.substring(0, 33) + "...";
           }
-          console.log("内容2",cont)
+         
           messageInfo.messageDescription = cont;
-          console.log("内容3",messageInfo.messageDescription)
+       
           AddMessage(messageInfo);
         } else {
           color.value = cloorActive;
@@ -238,7 +238,7 @@ console.log("内容",cont)
 };
 const isyetCollect = () => {
   if (store.userId != 0) {
-    message.info(data.value.id);
+
     const info = reactive({
       ArticleId: data.value.id,
       userId: store.userId,

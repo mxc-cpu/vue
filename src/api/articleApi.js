@@ -65,3 +65,9 @@ export const UpdateSeeCheck=async(info)=>{
 export const FuzzySearch=async(info)=>{
     return await axios.post('/Article/FuzzySearch?FuzzyTitle='+info)
 }
+export const StatisticsUserArticle = async(id)=>{
+    return await axios.get('/Article/StatisticsUserArticle/'+id)
+}
+export const StatisticsUserArticleUpvoteSum = async(id)=>{
+    return await axios.get('/Article/StatisticsUserArticleUpvoteSum/'+id)
+}

@@ -3,8 +3,8 @@
         <NavBar />
     </header>
     <div class="container">
-        <n-grid :x-gap="20" :y-gap="8" cols="1 400:2 600:3 1000:5 ">
-            <n-grid-item v-for="(item, index) in categoryListInfo.arr ">
+        <n-grid  :x-gap="20" :y-gap="8" cols="1 400:2 600:3 1000:5 ">
+            <n-grid-item  v-for="(item, index) in categoryListInfo.arr ">
                 <CategoryItem  :key="index"
                     :categorycoverUrl="item.categoryCover" :categoryName="item.categoryName"
                     :categoryDescriptionlLink="`/ArticleListByCategoryId/${item.id}`">
@@ -17,6 +17,7 @@
 
                 </CategoryItem>
             </n-grid-item>
+           
         </n-grid>
     </div>
     <footer>
