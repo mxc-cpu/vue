@@ -44,7 +44,7 @@
             :newsData="newDataComp"
           ></Asidebox>
           <Asidebox
-            name="评论最多文章"
+            name="最热文章"
             type="news"
             :newsData="hotnewDataComp"
           ></Asidebox>
