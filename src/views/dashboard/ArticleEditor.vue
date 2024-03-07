@@ -9,6 +9,7 @@
         style="margin-bottom: 15px"
       
       >
+ 
         <template #footer>
           <span>发布时间：{{ item.releaseDate }}</span>
         </template>
@@ -16,8 +17,9 @@
         <n-list-item>
           <n-thing content-style="margin-top: 20px;">
             <template #header
-              ><div   @click="$router.push(`/Detail/${item.id}`)" class="title is-4"><a>{{ item.title }}</a></div></template
+              ><div   @click="ItemDescription=item.description,title=item.title,showDetail=true" class="title is-4"><a>{{ item.title }}</a></div></template
             >
+            
             <template #avatar>
               <n-tag  v-if="item.isBoutique" type="warning"> 精品 </n-tag>
             </template>
@@ -25,6 +27,27 @@
               ><span>是否发布：{{ item.isPublished }}</span></template
             >
           </n-thing>
+               <n-modal
+    :mask-closable="false"
+    v-model:show="showDetail"
+    @after-leave="Rest"
+    preset="dialog"
+    title="Dialog"
+    @negative-click="cancelCallback"
+    style="width: 1000px"
+  >
+    <template #header>
+      <div>文章内容查看</div>
+    </template>
+    <div class="content">
+      <h1>《{{ title }}》</h1>
+      <html v-html="ItemDescription"></html>
+    </div>
+
+    <template #action>
+      <n-button @click="showDetail = false">以阅</n-button>
+    </template>
+  </n-modal>
           <template #suffix>
             <div class="mx-4">
               <div class="columns is-variable is-1">
@@ -163,6 +186,8 @@
       ></CropperImage>
     </div>
   </n-modal>
+ 
+
 </template>
 
 <script setup>
@@ -189,7 +214,10 @@ const state = ref("add");
 const userState = loginState();
 const CoverStore = ArticleCoverStore();
 let checkis = ref(false);
+let showDetail=ref(false);
+let title=ref("")
 let check = ref(false);
+let ItemDescription=ref("");
 let pageCount = ref(1);
 const message = useMessage();
 const showUpdatcover = ref(false);
