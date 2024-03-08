@@ -434,9 +434,10 @@ const add = async () => {
             articleId: res.data.data,
             dynamicsDescription: cont,
           });
-
+          console.log("info",info);
+          if(addArticle.isPublished){
           AddDynamics(info);
-
+          }
           loadBlogs();
         }
       } else {
