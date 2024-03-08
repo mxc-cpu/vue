@@ -17,7 +17,7 @@
       <n-space>
       <n-button tertiary type="info" plain @click="rotateLeft">《=向左旋转图片</n-button>
       <n-button tertiary type="info" plain @click="rotateRight">向右旋转图片=》</n-button>
-      <n-button type="primary" @click="getCropDataBase64">截取并更改头像</n-button>
+      <n-button type="primary" @click="getCropDataBase64">截取并更改图像</n-button>
     </n-space>
    </n-grid-item>
     

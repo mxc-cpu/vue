@@ -24,7 +24,7 @@
           </router-link>
         
          
-         <a title="该文章已经删除"  @click="del(item.id)" v-else style="text-decoration:line-through; ">  {{ item.title }}</a> 
+         <a title="该文章已经下架"  @click="del(item.id)" v-else style="text-decoration:line-through; ">  {{ item.title }}</a> 
          
         
         </td>
