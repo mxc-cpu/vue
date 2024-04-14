@@ -29,7 +29,9 @@ axios.interceptors.response.use(
     return res;
   },
   (error) => {
-    alert(error.response.data.message);
+    for( var obj in error.response.data.errors ){
+    alert("错误"+error.response.data.errors[obj]);
+  }
     return error;
   }
 );

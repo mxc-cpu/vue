@@ -88,10 +88,12 @@ const emit = defineEmits(["update:model-value"]);
 let initFinished = false;
 
 onMounted(() => {
+
   setTimeout(() => {
-    valueHtml.value = props.modelValue;
+   valueHtml.value = props.modelValue;
     initFinished = true;
   }, 200);
+  
 });
 
 // 组件销毁时，也及时销毁编辑器，重要！
@@ -104,13 +106,22 @@ onBeforeUnmount(() => {
 // 编辑器回调函数
 const handleCreated = (editor) => {
   console.log("created", editor);
+  
   editorRef.value = editor; // 记录 editor 实例，重要！
+ 
 };
 const handleChange = (editor) => {
   if (initFinished) {
+  
     emit("update:model-value", valueHtml.value);
+    
   }
+  
 };
+
+
+
+
 </script>
 
 <style lang="scss" scoped></style>

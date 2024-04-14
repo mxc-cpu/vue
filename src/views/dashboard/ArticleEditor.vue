@@ -84,19 +84,20 @@
       </n-space>
     </n-tab-pane>
     <n-tab-pane name="add" tab="添加文章">
-      <n-form>
-        <n-form-item label="标题">
+      <n-form ref="AddRef" :rules="rules" :model=addArticle>
+        <n-form-item  label="标题">
           <n-input v-model:value="addArticle.title" placeholder="请输入标题" />
         </n-form-item>
-        <n-form-item label="分区">
+        <n-form-item   label="分区">
           <n-select
             placeholder="请选择分区"
+
             v-model:value="addArticle.categoryId"
             :options="categortyOptions"
             @update:value="getname"
           />
         </n-form-item>
-        <n-form-item label="封面">
+        <n-form-item  label="封面">
           <img :src="addArticle.imageUrl" />
         </n-form-item>
         <n-form-item>
@@ -105,7 +106,9 @@
           </n-button>
         </n-form-item>
         <n-form-item label="内容">
+          {{addArticle.description  }}
           <rich-text-editor v-model="addArticle.description"></rich-text-editor>
+          
         </n-form-item>
         <n-form-item label="选项">
           <n-checkbox
@@ -120,12 +123,13 @@
           />
         </n-form-item>
         <n-form-item label="">
-          <n-button @click="add">提交</n-button>
+          <n-button @click="handleValidateButtonClickAdd">提交</n-button>
         </n-form-item>
       </n-form>
     </n-tab-pane>
     <n-tab-pane name="update" tab="修改">
-      <n-form>
+      <n-form  ref="updateRef" :rules="rules" :model=updateArticle>
+       
         <n-form-item label="标题">
           <n-input
             v-filter
@@ -136,7 +140,7 @@
         <n-form-item label="分区">
           <p>{{ updateArticle.categoryName }}</p>
         </n-form-item>
-        <n-form-item label="封面">
+        <n-form-item label="封面" >
           <img :src="updateArticle.imageUrl" />
         </n-form-item>
         <n-form-item>
@@ -144,7 +148,8 @@
             上传封面
           </n-button>
         </n-form-item>
-        <n-form-item label="内容">
+        <n-form-item  label="内容" > 
+          
           <rich-text-editor
             v-model="updateArticle.Description"
           ></rich-text-editor>
@@ -157,7 +162,7 @@
           />
         </n-form-item>
         <n-form-item label="">
-          <n-button @click="update">提交</n-button>
+          <n-button @click="handleValidateButtonClickUpdate">提交</n-button>
         </n-form-item>
       </n-form>
     </n-tab-pane>
@@ -286,6 +291,30 @@ const changeBoutique = (checked) => {
 const updatePublished = (checked) => {
   updateArticle.isPublished = checked;
 };
+//添加验证
+const handleValidateButtonClickAdd=(e)=> {
+        e.preventDefault();
+        AddRef.value?.validate((errors) => {
+          if (!errors) {
+            add();
+          } else {
+            console.log(errors);
+            message.error("验证失败");
+          }
+        });
+      }
+//修改验证
+const handleValidateButtonClickUpdate=(e)=> {
+        e.preventDefault();
+        updateRef.value?.validate((errors) => {
+          if (!errors) {
+            update();
+          } else {
+            console.log(errors);
+            message.error("验证失败");
+          }
+        });
+      }
 //置顶
 const SetTap = (value, item) => {
   console.log("ddd", value, item);
@@ -319,7 +348,7 @@ const SetTap = (value, item) => {
 };
 
 //文章添加数据
-const addArticle = reactive({
+let addArticle = reactive({
   userId: Number(userState.userId),
   authorName: userState.name1,
   imageUrl: "",
@@ -401,6 +430,8 @@ const getname = () => {
 };
 //添加文章
 const add = async () => {
+  //这个富文本空内容时自带的标签，所以要判断一下
+  if(addArticle.description!=="<p><br></p>"){
   AddArticle(addArticle)
     .then((res) => {
       if (res.data.success == true) {
@@ -445,8 +476,10 @@ const add = async () => {
       }
     })
     .catch((error) => {
-      message.error(error);
-    });
+      message.error("内容不完整");
+    });}else{
+      message.error("博文详情不能为空");
+    }
 };
 
 const toUpdate = async (blog) => {
@@ -458,20 +491,26 @@ const toUpdate = async (blog) => {
   updateArticle.categoryName = blog.categoryName;
   updateArticle.isPublished = blog.isPublished;
 };
-
+const updateRef=ref();
+const AddRef=ref();
 const update = async () => {
+   //这个富文本空内容时自带的标签，所以要判断一下
+   if(updateArticle.Description!=="<p><br></p>"){
   UpdateArticle(updateArticle)
     .then((res) => {
       if (res.data.success == true) {
-        message.success(res.data.message);
+        message.success("修改成功");
         loadBlogs();
       } else {
         message.error("修改失败", res.data.message);
       }
     })
     .catch((error) => {
-      message.error(error);
+      message.error("内容不完整");
     });
+  }else{
+    message.error("博文详情不能为空");
+  }
   // if (res.data.code == 200) {
   //     message.info(res.data.msg)
 
@@ -480,7 +519,18 @@ const update = async () => {
   //     message.error(res.data.msg)
   // }
 };
-
+//规则检查
+let rules = {
+  title: [
+    { required: true, message: "标题不能为空", trigger: "blur" },
+    { min: 3, max: 15, message: "标题长度在3-6个字符", trigger: "blur" },
+    
+  ],
+  categoryId:[{ required: true, message: "分区不能为空", trigger: "blur" },],
+  id:[{ required: true, message: "id不能为空", trigger: "blur" },],
+  Description:[ { required: true, message: "内容不能为空", trigger: "blur" }, { min: 10, max: 15000, message: "内容长度在1-15000个字符", trigger: "blur" },],
+ 
+}
 const toDelete = async (id) => {
   dialog.warning({
     title: "警告",

@@ -150,7 +150,7 @@ const options = [
     },
   },
   {
-    label: "编写文章",
+    label: "博客管理",
     key: "editBlog",
     props: {
       onClick: () => {
